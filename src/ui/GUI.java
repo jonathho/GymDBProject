@@ -32,7 +32,7 @@ public class GUI extends JFrame implements ActionListener {
 
     public GUI() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-
+        // initialization of panels
         initInteractive();
         initList();
         initButtons();
