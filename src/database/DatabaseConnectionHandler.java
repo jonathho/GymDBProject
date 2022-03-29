@@ -34,7 +34,25 @@ public class DatabaseConnectionHandler {
     }
 
     public void insertClassSession(ClassSession model) {
-        //TODO
+        try {
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO classSession VALUES (?,?,?,?,?,?,?)");
+            ps.setInt(1, model.getClass_code());
+            ps.setString(2, model.getAddress());
+            ps.setInt(3, model.getSIN());
+            ps.setTimestamp(4, model.getStart_time());
+            ps.setString(5, model.getCategory());
+            ps.setInt(6, model.getDuration());
+            ps.setInt(7, model.getSize());
+            //TODO: need to check for nulls?
+
+            ps.executeUpdate();
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
     }
 
     public void deleteClassSession(int class_code) {
