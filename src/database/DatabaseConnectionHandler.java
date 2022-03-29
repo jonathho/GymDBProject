@@ -49,6 +49,7 @@ public class DatabaseConnectionHandler {
         ArrayList<ClassSession> result = new ArrayList<ClassSession>();
 
         //TODO
+        return null;
     }
 
 

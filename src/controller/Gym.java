@@ -7,7 +7,7 @@ import delegates.UITransactionsDelegate;
 import model.ClassSession;
 import ui.GUI;
 import ui.LoginWindow;
-import ui.TerminalTransactions;
+//import ui.TerminalTransactions;
 
 import java.sql.Timestamp;
 
@@ -34,10 +34,10 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
         if (didConnect) {
             loginWindow.dispose();
 
-            //TODO: stop here and use gui when ready
-            TerminalTransactions transactions = new TerminalTransactions();
-            transactions.setupDatabase(this);
-            transactions.showMainMenu(this);
+//            //TODO: stop here and use gui when ready
+//            TerminalTransactions transactions = new TerminalTransactions();
+//            transactions.setupDatabase(this);
+//            transactions.showMainMenu(this);
         } else {
             loginWindow.handleLoginFailed();
 
