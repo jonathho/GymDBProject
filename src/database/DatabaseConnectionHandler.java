@@ -56,11 +56,42 @@ public class DatabaseConnectionHandler {
     }
 
     public void deleteClassSession(int class_code) {
-        //TODO
+        try {
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM classSession WHERE class_code = ?");
+            ps.setInt(1, class_code);
+
+            int rowCount = ps.executeUpdate();
+            if (rowCount == 0) {
+                System.out.println(WARNING_TAG + " Class code " + class_code + " does not exist!");
+            }
+
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
     }
 
     public void updateClassSession(int class_code, Timestamp start_time) {
-        //TODO
+        try {
+            PreparedStatement ps = connection.prepareStatement("UPDATE classSession SET start_time = ? WHERE class_code = ?");
+            ps.setTimestamp(1, start_time);
+            ps.setInt(2, class_code);
+
+            int rowCount = ps.executeUpdate();
+            if (rowCount == 0) {
+                System.out.println(WARNING_TAG + " Class code " + class_code + " does not exist!");
+            }
+
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
     }
 
     public ClassSession[] getGymInfo() {
