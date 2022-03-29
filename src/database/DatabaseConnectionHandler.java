@@ -47,7 +47,6 @@ public class DatabaseConnectionHandler {
 
     public ClassSession[] getGymInfo() {
         ArrayList<ClassSession> result = new ArrayList<ClassSession>();
-
         //TODO
         return null;
     }
