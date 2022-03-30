@@ -180,11 +180,12 @@ public class GUI extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("filter")) {
-            //String timeFilter = (String) timeBox.getSelectedItem();
             String durFilter = (String) durBox.getSelectedItem();
             String catFilter = (String) catBox.getSelectedItem();
             String sizeFilter = (String) sizeBox.getSelectedItem();
-            dbHandler.selectClassSession(durFilter, catFilter, sizeFilter);
+            ClassSession[] classes = dbHandler.selectClassSession(durFilter, catFilter, sizeFilter);
+            displayClasses(classes);
+
         } else if (e.getActionCommand().equals("taken")) {
             if (customerIDfield.getText().equals("") || customerIDfield.getText().equals("Customer ID to search")) {
                 System.out.println("TAKEN PRESSED");
