@@ -41,6 +41,7 @@ public class GUI extends JFrame implements ActionListener {
     private JTabbedPane tabs;
     private JTextField classCode;
     private JTable joinedClassPanel;
+    private JFrame msg;
 
     private DatabaseConnectionHandler dbHandler;
 
@@ -233,7 +234,9 @@ public class GUI extends JFrame implements ActionListener {
     private void displayClasses(ClassSession[] classSessions) {
         // put classes into new frame
         if (classSessions.length == 0){
-            customerIDfield.setText("ID not found / No classes");
+            msg = new JFrame();
+            JOptionPane.showMessageDialog(msg, "ID not found / No classes");
+            //customerIDfield.setText("ID not found / No classes");
         } else {
             String[] columnNames = {"Class Code","Address", "SIN", "Start Time", "Category", "Duration", "Size"};
 

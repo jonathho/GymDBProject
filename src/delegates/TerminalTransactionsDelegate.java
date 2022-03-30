@@ -10,7 +10,7 @@ public interface TerminalTransactionsDelegate {
     void insertClassSession(ClassSession model);
     void deleteClassSession(int class_code);
     void updateClassSession(int class_code, Timestamp start_time);
-    void showClassSessionTerminal();
+    void printResults();
 
     void transactionsFinishedTerminal();
 }
