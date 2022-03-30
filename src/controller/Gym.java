@@ -4,7 +4,7 @@ import database.DatabaseConnectionHandler;
 import delegates.LoginWindowDelegate;
 import delegates.TerminalTransactionsDelegate;
 import delegates.UITransactionsDelegate;
-import model.ClassSession;
+import model.*;
 import ui.GUI;
 import ui.LoginWindow;
 //import ui.TerminalTransactions;
@@ -23,6 +23,7 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
     }
 
     private void start() {
+
         // temporary
         new GUI(dbHandler);
 
@@ -37,8 +38,12 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
         if (didConnect) {
             loginWindow.dispose();
 
+
+            
+
 //            //TODO: stop here and use gui when ready
             new GUI(dbHandler);
+            this.showClassSessionTerminal();
 //            TerminalTransactions transactions = new TerminalTransactions();
 //            transactions.setupDatabase(this);
 //            transactions.showMainMenu(this);
@@ -56,8 +61,8 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
     /**
      * Insert a class session with given info
      */
-    public void insertClassSession(ClassSession model) {
-        dbHandler.insertClassSession(model);
+    public void insertClassSession(ClassSession classSession) {
+        dbHandler.insertClassSession(classSession);
     }
 
     /**
@@ -79,7 +84,39 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
      */
     public void showClassSessionTerminal() {
         //TODO
-        ClassSession[] models = dbHandler.getGymInfo();
+        ClassSession[] classSessions = dbHandler.getJoinInfo(20);
+
+        System.out.printf("%-15.15s", "class code");
+        System.out.printf("%-35.35s", "address");
+        System.out.printf("%-15.15s", "SIN");
+        System.out.printf("%-25.25s", "start time");
+        System.out.printf("%-15.15s", "category");
+        System.out.printf("%-15.15s", "duration");
+        System.out.printf("%-15.15s", "capacity");
+        System.out.println();
+
+        for (int i = 0; i < classSessions.length; i++) {
+            ClassSession classSession = classSessions[i];
+
+
+            // simplified output formatting; truncation may occur
+            System.out.printf("%-15.15s", classSession.getClass_code());
+            if (classSession.getAddress() == null) {
+                System.out.printf("%-35.35s", " ");
+            } else {
+                System.out.printf("%-35.35s", classSession.getAddress());
+            }
+            System.out.printf("%-15.15s", classSession.getSIN());
+            if (classSession.getStart_time().toString() == "") {
+                System.out.printf("%-25.25s", " ");
+            } else {
+                System.out.printf("%-25.25s", classSession.getStart_time().toString());
+            }
+            System.out.printf("%-15.15s", classSession.getCategory());
+            System.out.printf("%-15.15s", classSession.getDuration());
+            System.out.printf("%-15.15s", classSession.getcapacity());
+            System.out.println();
+        }
     }
 
     /**
@@ -87,7 +124,7 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
      */
     public void showClassSessionUI() {
         //TODO
-        ClassSession[] models = dbHandler.getGymInfo();
+        ClassSession[] classSessions = dbHandler.getGymInfo();
     }
 
     @Override

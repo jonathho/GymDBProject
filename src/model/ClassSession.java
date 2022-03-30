@@ -9,17 +9,17 @@ public class ClassSession {
     private final Timestamp start_time;
     private final String category;
     private final int duration;
-    private final int size;
+    private final int capacity;
 
     public ClassSession(int class_code, String address, int sin, Timestamp start_time, String category,
-                        int duration, int size) {
+                        int duration, int capacity) {
         this.class_code = class_code;
         this.address = address;
         SIN = sin;
         this.start_time = start_time;
         this.category = category;
         this.duration = duration;
-        this.size = size;
+        this.capacity = capacity;
     }
 
     public int getClass_code() {
@@ -46,7 +46,7 @@ public class ClassSession {
         return duration;
     }
 
-    public int getSize() {
-        return size;
+    public int getcapacity() {
+        return capacity;
     }
 }

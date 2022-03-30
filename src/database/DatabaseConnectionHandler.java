@@ -46,10 +46,68 @@ public class DatabaseConnectionHandler {
     }
 
     public ClassSession[] getGymInfo() {
+        System.out.println("executing select *");
         ArrayList<ClassSession> result = new ArrayList<ClassSession>();
-
         //TODO
-        return null;
+
+        try {
+            String query = "SELECT * FROM classSession";
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while(rs.next()) {
+                ClassSession classSession = new ClassSession(
+                        rs.getInt("class_code"),
+                        rs.getString("address"),
+                        rs.getInt("SIN"),
+                        rs.getTimestamp("start_time"),
+                        rs.getString("category"),
+                        rs.getInt("duration"),
+                        rs.getInt("capacity")
+                );
+                result.add(classSession);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result.toArray(new ClassSession[result.size()]);
+    }
+
+    public ClassSession[] getJoinInfo(int cid) {
+        System.out.println("executing join");
+        ArrayList<ClassSession> result = new ArrayList<ClassSession>();
+        //TODO
+
+        try {
+            String query = "SELECT * FROM SIGNSUP S, CLASSSESSION C WHERE " +
+                    "C.CLASS_CODE = S.CLASS_CODE and S.CID = " + cid;
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while(rs.next()) {
+                ClassSession classSession = new ClassSession(
+                        rs.getInt("class_code"),
+                        rs.getString("address"),
+                        rs.getInt("SIN"),
+                        rs.getTimestamp("start_time"),
+                        rs.getString("category"),
+                        rs.getInt("duration"),
+                        rs.getInt("capacity")
+                );
+                result.add(classSession);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result.toArray(new ClassSession[result.size()]);
     }
 
 
@@ -79,7 +137,7 @@ public class DatabaseConnectionHandler {
     }
 
     public void databaseSetup() {
-        dropClassSessionTableIfExists();
+        //dropClassSessionTableIfExists();
 
         //TODO
     }
