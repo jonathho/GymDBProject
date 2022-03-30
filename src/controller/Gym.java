@@ -33,14 +33,17 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
     }
 
     public void login(String username, String password) {
-        boolean didConnect = dbHandler.login("ora_kevin246", "a83231506");
+        boolean didConnect = dbHandler.login(username, password);
 
         if (didConnect) {
             loginWindow.dispose();
 
+
+
+
 //            //TODO: stop here and use gui when ready
             new GUI(dbHandler);
-            //this.showClassSessionTerminal();
+            this.showClassSessionTerminal();
 //            TerminalTransactions transactions = new TerminalTransactions();
 //            transactions.setupDatabase(this);
 //            transactions.showMainMenu(this);
@@ -81,7 +84,13 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
      */
     public void showClassSessionTerminal() {
         //TODO
-        ClassSession[] classSessions = dbHandler.getJoinInfo(20);
+        insertClassSession(new ClassSession(420, "2891 Laurel St", 862245315,
+                new Timestamp(System.currentTimeMillis()), "Yoga", 45, 10));
+        updateClassSession(441, new Timestamp(System.currentTimeMillis()));
+        updateClassSession(420, new Timestamp(System.currentTimeMillis()));
+        Timestamp ts = Timestamp.valueOf("2022-03-06 18:00:00");
+        String category = "'Cycling'";
+        ClassSession[] classSessions = dbHandler.selectClassSession(category, ts);
 
         System.out.printf("%-15.15s", "class code");
         System.out.printf("%-35.35s", "address");
