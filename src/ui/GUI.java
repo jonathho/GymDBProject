@@ -16,7 +16,7 @@ public class GUI extends JFrame implements ActionListener {
     public static final int WIDTH = 400;
     public static final int HEIGHT = 700;
     private String[] classDurations = {"all", "15", "30", "45", "60", "60+"};
-    private String[] classCategories = {"all", "Yoga", "Cycling", "Private", "Zumba"};
+    private String[] classCategories = {"all", "Yoga", "Cycling", "Personal", "Zumba"};
     private String[] classSizes = {"all", "1", "10", "30", "30+"};
     private String[] periods = {"all", "1 day", "3 days", "1 week", "1 month"};
     private String[] monthStrings = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
@@ -24,7 +24,7 @@ public class GUI extends JFrame implements ActionListener {
     private JComboBox<String> durBox;
     private JComboBox<String> catBox;
     private JComboBox<String> sizeBox;
-    private JComboBox<String> timeBox;
+    //private JComboBox<String> timeBox;
     private JTextField selectedDate;
     private JTextField classSize;
     private JTextField classDuration;
@@ -86,7 +86,7 @@ public class GUI extends JFrame implements ActionListener {
         durBox = new JComboBox<>(classDurations);
         catBox = new JComboBox<>(classCategories);
         sizeBox = new JComboBox<>(classSizes);
-        timeBox = new JComboBox<>(periods);
+        //timeBox = new JComboBox<>(periods);
 
         JButton filter = new JButton("FILTER CLASSES");
         customerIDfield = new JTextField(15);
@@ -118,8 +118,8 @@ public class GUI extends JFrame implements ActionListener {
 
 
         buttonPanel.add(new JLabel("SEARCH:"));
-        buttonPanel.add(new JLabel("Time Period:"));
-        buttonPanel.add(timeBox);
+        //buttonPanel.add(new JLabel("Time Period:"));
+        //buttonPanel.add(timeBox);
         buttonPanel.add(new JLabel("Duration:"));
         buttonPanel.add(durBox);
         buttonPanel.add(new JLabel("Category:"));
@@ -180,10 +180,11 @@ public class GUI extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("filter")) {
+            //String timeFilter = (String) timeBox.getSelectedItem();
             String durFilter = (String) durBox.getSelectedItem();
             String catFilter = (String) catBox.getSelectedItem();
             String sizeFilter = (String) sizeBox.getSelectedItem();
-            System.out.println("FILTER PRESSED " + durFilter + " " + catFilter + " " + sizeFilter);
+            dbHandler.selectClassSession(durFilter, catFilter, sizeFilter);
         } else if (e.getActionCommand().equals("taken")) {
             if (customerIDfield.getText().equals("") || customerIDfield.getText().equals("Customer ID to search")) {
                 System.out.println("TAKEN PRESSED");
@@ -210,7 +211,6 @@ public class GUI extends JFrame implements ActionListener {
 
     private void displayClasses(ClassSession[] classSessions) {
         // put classes into new frame
-
         if (classSessions.length == 0){
             customerIDfield.setText("ID not found / No classes");
         } else {
@@ -225,7 +225,7 @@ public class GUI extends JFrame implements ActionListener {
                 data[i][3] = classSessions[i].getStart_time();
                 data[i][4] = classSessions[i].getCategory();
                 data[i][5] = classSessions[i].getDuration();
-                data[i][6] = classSessions[i].getcapacity();
+                data[i][6] = classSessions[i].getCapacity();
             }
             joinedClassPanel = new JTable(data, columnNames);
             JScrollPane scrollPane = new JScrollPane(joinedClassPanel);
