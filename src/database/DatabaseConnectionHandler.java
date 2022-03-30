@@ -2,6 +2,7 @@ package database;
 
 import model.AggregSignsUp;
 import model.ClassSession;
+import model.ClassesPerLocation;
 import model.ProjectionClass;
 
 import java.sql.*;
@@ -144,7 +145,7 @@ public class DatabaseConnectionHandler {
         String delim2 = (durationQ.equals("") ||(sizeQ.equals("")) ? "" : " AND ");
 
         try {
-            String query = "SELECT * FROM ClassSession" + where + categoryQ + delim1+  durationQ + delim2 + sizeQ;
+            String query = "SELECT * FROM ClassSession " + where + categoryQ + delim1+  durationQ + delim2 + sizeQ;
             System.out.println(query);
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -281,7 +282,7 @@ public class DatabaseConnectionHandler {
 
             while(rs.next()) {
                 AggregSignsUp aggregSignsUp = new AggregSignsUp(
-                        rs.getInt("cid"),
+                        cid,
                         rs.getInt("numClasses")
                 );
                 result.add(aggregSignsUp);
@@ -293,6 +294,36 @@ public class DatabaseConnectionHandler {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
         return result.toArray(new AggregSignsUp[result.size()]);
+    }
+
+    /**
+     * Finds number of classes for each gym location
+     */
+    public ClassesPerLocation[] findNumClassesAllLocations() {
+        System.out.println("executing nested aggregation");
+        ArrayList<ClassesPerLocation> result = new ArrayList<ClassesPerLocation>();
+
+        try {
+            String query = "SELECT L.ADDRESS, COUNT(DISTINCT CLASS_CODE) as num_classes " +
+                    "FROM LOCATION L, CLASSSESSION C " +
+                    "WHERE L.ADDRESS = C.ADDRESS GROUP BY L.ADDRESS";
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while(rs.next()) {
+                ClassesPerLocation classesPerLocation = new ClassesPerLocation(
+                        rs.getString("address"),
+                        rs.getInt("numClasses")
+                );
+                result.add(classesPerLocation);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+        return result.toArray(new ClassesPerLocation[result.size()]);
     }
 
 
