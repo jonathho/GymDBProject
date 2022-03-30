@@ -276,14 +276,14 @@ public class DatabaseConnectionHandler {
         ArrayList<AggregSignsUp> result = new ArrayList<AggregSignsUp>();
 
         try {
-            String query = "SELECT COUNT(DISTINCT confirmation) FROM SIGNSUP WHERE CID = " + cid;
+            String query = "SELECT COUNT(DISTINCT confirmation) as num_classes FROM SIGNSUP WHERE CID = " + cid;
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
             while(rs.next()) {
                 AggregSignsUp aggregSignsUp = new AggregSignsUp(
                         cid,
-                        rs.getInt("numClasses")
+                        rs.getInt("num_classes")
                 );
                 result.add(aggregSignsUp);
             }
