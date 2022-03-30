@@ -34,6 +34,8 @@ public class DatabaseConnectionHandler {
     }
 
     public void insertClassSession(ClassSession model) {
+        System.out.println("Executing Insert");
+
         try {
             PreparedStatement ps = connection.prepareStatement("INSERT INTO ClassSession VALUES (?,?,?,?,?,?,?)");
             ps.setInt(1, model.getClass_code());
@@ -56,6 +58,8 @@ public class DatabaseConnectionHandler {
     }
 
     public void deleteClassSession(int class_code) {
+        System.out.println("Executing Delete");
+
         try {
             PreparedStatement ps = connection.prepareStatement("DELETE FROM ClassSession WHERE class_code = ?");
             ps.setInt(1, class_code);
@@ -75,6 +79,8 @@ public class DatabaseConnectionHandler {
     }
 
     public void updateClassSession(int class_code, Timestamp start_time) {
+        System.out.println("Executing Update");
+
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE ClassSession SET start_time = ? WHERE class_code = ?");
             ps.setTimestamp(1, start_time);
@@ -100,7 +106,7 @@ public class DatabaseConnectionHandler {
         ArrayList<ClassSession> result = new ArrayList<ClassSession>();
 
         try {
-            String query = "SELECT * FROM ClassSession WHERE category = "+ cat +" AND start_time = "+ s_time;
+            String query = "SELECT * FROM ClassSession WHERE Category = " + cat;
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
