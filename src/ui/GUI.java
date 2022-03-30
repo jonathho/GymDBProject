@@ -58,7 +58,6 @@ public class GUI extends JFrame implements ActionListener {
         JLabel outputTitle = new JLabel("RESULTS:", JLabel.LEFT);
         listPanel.add(outputTitle);
         // setup all tables and classes
-
         add(listPanel);
         listPanel.setBounds(WIDTH / 2 + 10, 20, WIDTH / 2 - 100, HEIGHT - 100);
         listPanel.setVisible(true);
