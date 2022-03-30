@@ -13,10 +13,10 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
 public class GUI extends JFrame implements ActionListener {
-    public static final int WIDTH = 800;
+    public static final int WIDTH = 400;
     public static final int HEIGHT = 700;
     private String[] classDurations = {"all", "15", "30", "45", "60", "60+"};
-    private String[] classCategories = {"all", "Yoga", "Cycling", "Private", "Zumba"};
+    private String[] classCategories = {"all", "Yoga", "Cycling", "Personal", "Zumba"};
     private String[] classSizes = {"all", "1", "10", "30", "30+"};
     private String[] periods = {"all", "1 day", "3 days", "1 week", "1 month"};
     private String[] monthStrings = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
@@ -24,7 +24,7 @@ public class GUI extends JFrame implements ActionListener {
     private JComboBox<String> durBox;
     private JComboBox<String> catBox;
     private JComboBox<String> sizeBox;
-    private JComboBox<String> timeBox;
+    //private JComboBox<String> timeBox;
     private JTextField selectedDate;
     private JTextField classSize;
     private JTextField classDuration;
@@ -36,11 +36,13 @@ public class GUI extends JFrame implements ActionListener {
     private JPanel listPanel;
     private JTabbedPane tabs;
     private JTextField classCode;
+    private JTable joinedClassPanel;
 
     private DatabaseConnectionHandler dbHandler;
 
 
     public GUI(DatabaseConnectionHandler dbHandler) {
+        super("Gym API");
         this.dbHandler = dbHandler;
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         // initialization of panels
@@ -60,7 +62,7 @@ public class GUI extends JFrame implements ActionListener {
         JLabel outputTitle = new JLabel("RESULTS:", JLabel.LEFT);
         listPanel.add(outputTitle);
         // setup all tables and classes
-        add(listPanel);
+        //add(listPanel);
         listPanel.setBounds(WIDTH / 2 + 10, 20, WIDTH / 2 - 100, HEIGHT - 100);
         listPanel.setVisible(true);
     }
@@ -69,7 +71,7 @@ public class GUI extends JFrame implements ActionListener {
         sumTab = new JPanel();
         modTab = new JPanel();
         tabs = new JTabbedPane();
-        tabs.setBounds(40, 20, WIDTH / 2 - 100, HEIGHT - 100);
+        tabs.setBounds(10, 20, WIDTH-40, HEIGHT - 100);
         //Make panel for each tab
         tabs.add("SUMMARY", sumTab);
         tabs.add("MODIFY", modTab);
@@ -84,7 +86,7 @@ public class GUI extends JFrame implements ActionListener {
         durBox = new JComboBox<>(classDurations);
         catBox = new JComboBox<>(classCategories);
         sizeBox = new JComboBox<>(classSizes);
-        timeBox = new JComboBox<>(periods);
+        //timeBox = new JComboBox<>(periods);
 
         JButton filter = new JButton("FILTER CLASSES");
         customerIDfield = new JTextField(15);
@@ -116,8 +118,8 @@ public class GUI extends JFrame implements ActionListener {
 
 
         buttonPanel.add(new JLabel("SEARCH:"));
-        buttonPanel.add(new JLabel("Time Period:"));
-        buttonPanel.add(timeBox);
+        //buttonPanel.add(new JLabel("Time Period:"));
+        //buttonPanel.add(timeBox);
         buttonPanel.add(new JLabel("Duration:"));
         buttonPanel.add(durBox);
         buttonPanel.add(new JLabel("Category:"));
@@ -178,15 +180,16 @@ public class GUI extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("filter")) {
+            //String timeFilter = (String) timeBox.getSelectedItem();
             String durFilter = (String) durBox.getSelectedItem();
             String catFilter = (String) catBox.getSelectedItem();
             String sizeFilter = (String) sizeBox.getSelectedItem();
-            System.out.println("FILTER PRESSED " + durFilter + " " + catFilter + " " + sizeFilter);
+            dbHandler.selectClassSession(durFilter, catFilter, sizeFilter);
         } else if (e.getActionCommand().equals("taken")) {
             if (customerIDfield.getText().equals("") || customerIDfield.getText().equals("Customer ID to search")) {
                 System.out.println("TAKEN PRESSED");
             } else {
-                ClassSession[] classes = dbHandler.getGymInfo();
+                ClassSession[] classes = dbHandler.getJoinInfo(Integer.parseInt(customerIDfield.getText()));
                 displayClasses(classes);
             }
         } else if (e.getActionCommand().equals("cusFreq")) {
@@ -206,8 +209,30 @@ public class GUI extends JFrame implements ActionListener {
         }
     }
 
-    private void displayClasses(ClassSession[] classes) {
-        // put classes into right side of frame
+    private void displayClasses(ClassSession[] classSessions) {
+        // put classes into new frame
+        if (classSessions.length == 0){
+            customerIDfield.setText("ID not found / No classes");
+        } else {
+            String[] columnNames = {"Class Code","Address", "SIN", "Start Time", "Category", "Duration", "Size"};
+
+            JFrame classesFrame = new JFrame("Found Classes");
+            Object[][] data = new Object[classSessions.length][columnNames.length];
+            for (int i = 0; i < classSessions.length; i++) {
+                data[i][0] = classSessions[i].getClass_code();
+                data[i][1] = classSessions[i].getAddress();
+                data[i][2] = classSessions[i].getSIN();
+                data[i][3] = classSessions[i].getStart_time();
+                data[i][4] = classSessions[i].getCategory();
+                data[i][5] = classSessions[i].getDuration();
+                data[i][6] = classSessions[i].getCapacity();
+            }
+            joinedClassPanel = new JTable(data, columnNames);
+            JScrollPane scrollPane = new JScrollPane(joinedClassPanel);
+            classesFrame.add(scrollPane);
+            classesFrame.setSize(900, 400);
+            classesFrame.setVisible(true);
+        }
     }
 
     private void dateFrame() {
@@ -266,5 +291,4 @@ public class GUI extends JFrame implements ActionListener {
         dateFrame.add(finish);
         dateFrame.setVisible(true);
     }
-
 }
