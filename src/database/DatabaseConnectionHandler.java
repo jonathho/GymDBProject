@@ -1,9 +1,6 @@
 package database;
 
-import model.AggregSignsUp;
-import model.ClassSession;
-import model.ClassesPerLocation;
-import model.ProjectionClass;
+import model.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -324,6 +321,36 @@ public class DatabaseConnectionHandler {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
         return result.toArray(new ClassesPerLocation[result.size()]);
+    }
+
+    /**
+     * Division Query: Find locations offering classes in all categories
+     */
+    public LocationAddress[] findLocationsWithAllClassCategories() {
+        System.out.println("executing division");
+        ArrayList<LocationAddress> result = new ArrayList<LocationAddress>();
+
+        try {
+            String query = "SELECT L.ADDRESS FROM LOCATION L WHERE NOT EXISTS(" +
+                    "SELECT C1.CATEGORY FROM CLASSSESSION C1 MINUS (" +
+                    "SELECT C2.CATEGORY FROM CLASSSESSION C2 WHERE L.ADDRESS = C2.ADDRESS))";
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while(rs.next()) {
+                LocationAddress locationAddress = new LocationAddress(
+                  rs.getString("address")
+                );
+                result.add(locationAddress);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result.toArray(new LocationAddress[result.size()]);
     }
 
 
