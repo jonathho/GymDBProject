@@ -295,7 +295,7 @@ public class DatabaseConnectionHandler {
             while(rs.next()) {
                 ClassesPerLocation classesPerLocation = new ClassesPerLocation(
                         rs.getString("address"),
-                        rs.getInt("numClasses")
+                        rs.getInt("num_classes")
                 );
                 result.add(classesPerLocation);
             }

@@ -8,4 +8,12 @@ public class ClassesPerLocation {
         this.address = address;
         this.numClasses = numClasses;
     }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public int getNumClasses() {
+        return numClasses;
+    }
 }

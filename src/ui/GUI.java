@@ -2,7 +2,7 @@ package ui;
 
 
 import database.DatabaseConnectionHandler;
-import model.ClassSession;
+import model.*;
 
 
 import javax.swing.*;
@@ -209,25 +209,120 @@ public class GUI extends JFrame implements ActionListener {
 
         } else if (e.getActionCommand().equals("taken")) {
             if (customerIDfield.getText().equals("") || customerIDfield.getText().equals("Customer ID to search")) {
-                System.out.println("TAKEN PRESSED");
+                msg = new JFrame();
+                JOptionPane.showMessageDialog(msg, "ID not found");
             } else {
                 ClassSession[] classes = dbHandler.getJoinInfo(Integer.parseInt(customerIDfield.getText()));
                 displayClasses(classes);
             }
         } else if (e.getActionCommand().equals("cusFreq")) {
-            System.out.println("CUSTOMER FREQUENCY PRESSED");
+            AggregSignsUp[] classes = dbHandler.aggregSignsUps(Integer.parseInt(customerIDfield.getText()));
+            displayAggregation(classes);
         } else if (e.getActionCommand().equals("locFreq")) {
-            System.out.println("LOCATION FREQUENCY PRESSED");
+            ClassesPerLocation[] classesLocations = dbHandler.findNumClassesAllLocations();
+            displayClassLocations(classesLocations);
         } else if (e.getActionCommand().equals("locCov")) {
-            System.out.println("LOCATION COVERAGE PRESSED");
+            LocationAddress[] locationAddresses = dbHandler.findLocationsWithAllClassCategories();
+            findLocationCoverage(locationAddresses);
         } else if (e.getActionCommand().equals("classes")) {
-            System.out.println("ALL CLASSES PRESSED");
+            ProjectionClass[] classes = dbHandler.projectAllClassSessions();
+            displayProjection(classes);
         }  else if (e.getActionCommand().equals("date")) {
             dateFrame();
         }   else if (e.getActionCommand().equals("modify")) {
             System.out.println("MODIFY PRESSED");
         } else if (e.getActionCommand().equals("delete")) {
             System.out.println("delete PRESSED");
+        }
+    }
+
+    private void findLocationCoverage(LocationAddress[] classes) {
+        if (classes.length == 0){
+            msg = new JFrame();
+            JOptionPane.showMessageDialog(msg, "No locations cover all class categories");
+        } else {
+            String[] columnNames = {"Addresses of gyms providing all class categories"};
+
+            JFrame classesFrame = new JFrame("Found Locations");
+            Object[][] data = new Object[classes.length][columnNames.length];
+            for (int i = 0; i < classes.length; i++) {
+                data[i][0] = classes[i].getAddress();
+            }
+            joinedClassPanel = new JTable(data, columnNames);
+            JScrollPane scrollPane = new JScrollPane(joinedClassPanel);
+            classesFrame.add(scrollPane);
+            classesFrame.setSize(300, 400);
+            classesFrame.setVisible(true);
+        }
+    }
+
+    private void displayClassLocations(ClassesPerLocation[] classes) {
+        if (classes.length == 0){
+            msg = new JFrame();
+            JOptionPane.showMessageDialog(msg, "No classes");
+        } else {
+            String[] columnNames = {"Address", "Number of Classes"};
+
+            JFrame classesFrame = new JFrame("Found Classes");
+            Object[][] data = new Object[classes.length][columnNames.length];
+            for (int i = 0; i < classes.length; i++) {
+                data[i][0] = classes[i].getAddress();
+                data[i][1] = classes[i].getNumClasses();
+            }
+            joinedClassPanel = new JTable(data, columnNames);
+            JScrollPane scrollPane = new JScrollPane(joinedClassPanel);
+            classesFrame.add(scrollPane);
+            classesFrame.setSize(500, 400);
+            classesFrame.setVisible(true);
+        }
+    }
+
+    private void displayAggregation(AggregSignsUp[] classes) {
+        System.out.println(classes[0].getNumClasses());
+        /*if (classes.length == 0){
+            msg = new JFrame();
+            JOptionPane.showMessageDialog(msg, "No classes");
+        } else {
+            String[] columnNames = {"Address", "Start Time", "Category", "Duration", "Size"};
+
+            JFrame classesFrame = new JFrame("Found Classes");
+            Object[][] data = new Object[classes.length][columnNames.length];
+            for (int i = 0; i < classes.length; i++) {
+                data[i][0] = classes[i].getAddress();
+                data[i][1] = classes[i].getStart_time();
+                data[i][2] = classes[i].getCategory();
+                data[i][3] = classes[i].getDuration();
+                data[i][4] = classes[i].getCapacity();
+            }
+            joinedClassPanel = new JTable(data, columnNames);
+            JScrollPane scrollPane = new JScrollPane(joinedClassPanel);
+            classesFrame.add(scrollPane);
+            classesFrame.setSize(900, 400);
+            classesFrame.setVisible(true);
+        }*/
+    }
+
+    private void displayProjection(ProjectionClass[] projectionClasses) {
+        if (projectionClasses.length == 0){
+            msg = new JFrame();
+            JOptionPane.showMessageDialog(msg, "No classes");
+        } else {
+            String[] columnNames = {"Address", "Start Time", "Category", "Duration", "Size"};
+
+            JFrame classesFrame = new JFrame("Found Classes");
+            Object[][] data = new Object[projectionClasses.length][columnNames.length];
+            for (int i = 0; i < projectionClasses.length; i++) {
+                data[i][0] = projectionClasses[i].getAddress();
+                data[i][1] = projectionClasses[i].getStart_time();
+                data[i][2] = projectionClasses[i].getCategory();
+                data[i][3] = projectionClasses[i].getDuration();
+                data[i][4] = projectionClasses[i].getCapacity();
+            }
+            joinedClassPanel = new JTable(data, columnNames);
+            JScrollPane scrollPane = new JScrollPane(joinedClassPanel);
+            classesFrame.add(scrollPane);
+            classesFrame.setSize(900, 400);
+            classesFrame.setVisible(true);
         }
     }
 
