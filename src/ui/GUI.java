@@ -1,5 +1,8 @@
 package ui;
 
+import database.DatabaseConnectionHandler;
+import model.ClassSession;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -23,6 +26,7 @@ public class GUI extends JFrame implements ActionListener {
     private JTextField selectedDate;
     private JTextField classSize;
     private JTextField classDuration;
+    private JTextField customerIDfield;
     private JPanel sumTab;
     private JPanel modTab;
     private JPanel basicPanel;
@@ -31,8 +35,11 @@ public class GUI extends JFrame implements ActionListener {
     private JTabbedPane tabs;
     private JTextField classCode;
 
+    private DatabaseConnectionHandler dbHandler;
 
-    public GUI() {
+
+    public GUI(DatabaseConnectionHandler dbHandler) {
+        this.dbHandler = dbHandler;
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         // initialization of panels
         initInteractive();
@@ -79,7 +86,7 @@ public class GUI extends JFrame implements ActionListener {
         timeBox = new JComboBox<>(periods);
 
         JButton filter = new JButton("FILTER CLASSES");
-        JTextField customerIDfield = new JTextField(15);
+        customerIDfield = new JTextField(15);
         customerIDfield.setText("Customer ID to search");
         customerIDfield.addFocusListener(new FocusAdapter() {
             public void focusGained(FocusEvent e) {
@@ -175,7 +182,12 @@ public class GUI extends JFrame implements ActionListener {
             String sizeFilter = (String) sizeBox.getSelectedItem();
             System.out.println("FILTER PRESSED " + durFilter + " " + catFilter + " " + sizeFilter);
         } else if (e.getActionCommand().equals("taken")) {
-            System.out.println("TAKEN PRESSED");
+            if (customerIDfield.getText().equals("") || customerIDfield.getText().equals("Customer ID to search")) {
+                System.out.println("TAKEN PRESSED");
+            } else {
+                ClassSession[] classes = dbHandler.getGymInfo();
+                displayClasses(classes);
+            }
         } else if (e.getActionCommand().equals("cusFreq")) {
             System.out.println("CUSTOMER FREQUENCY PRESSED");
         } else if (e.getActionCommand().equals("locFreq")) {
@@ -191,6 +203,10 @@ public class GUI extends JFrame implements ActionListener {
         } else if (e.getActionCommand().equals("delete")) {
             System.out.println("delete PRESSED");
         }
+    }
+
+    private void displayClasses(ClassSession[] classes) {
+        // put classes into right side of frame
     }
 
     private void dateFrame() {
