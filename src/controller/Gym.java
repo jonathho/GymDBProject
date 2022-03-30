@@ -24,8 +24,12 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
 
     private void start() {
 
-        loginWindow = new LoginWindow();
-        loginWindow.showFrame(this);
+        // temporary
+        new GUI(dbHandler);
+
+        //loginWindow = new LoginWindow();
+        //loginWindow.showFrame(this);
+
     }
 
     public void login(String username, String password) {
@@ -35,10 +39,11 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
             loginWindow.dispose();
 
 
-//            TODO: stop here and use gui when ready
-            new GUI();
-            this.showClassSessionTerminal();
+            
 
+//            //TODO: stop here and use gui when ready
+            new GUI(dbHandler);
+            this.showClassSessionTerminal();
 //            TerminalTransactions transactions = new TerminalTransactions();
 //            transactions.setupDatabase(this);
 //            transactions.showMainMenu(this);

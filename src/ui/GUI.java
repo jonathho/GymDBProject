@@ -1,6 +1,8 @@
 package ui;
 
-import controller.*;
+
+import database.DatabaseConnectionHandler;
+import model.ClassSession;
 
 
 import javax.swing.*;
@@ -17,23 +19,29 @@ public class GUI extends JFrame implements ActionListener {
     private String[] classCategories = {"all", "Yoga", "Cycling", "Private", "Zumba"};
     private String[] classSizes = {"all", "1", "10", "30", "30+"};
     private String[] periods = {"all", "1 day", "3 days", "1 week", "1 month"};
+    private String[] monthStrings = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
     private JComboBox<String> durBox;
     private JComboBox<String> catBox;
     private JComboBox<String> sizeBox;
     private JComboBox<String> timeBox;
-    private JComboBox<String> startBox;
     private JTextField selectedDate;
-    private JFrame dateFrame;
+    private JTextField classSize;
+    private JTextField classDuration;
+    private JTextField customerIDfield;
     private JPanel sumTab;
     private JPanel modTab;
     private JPanel basicPanel;
     private JPanel buttonPanel;
     private JPanel listPanel;
     private JTabbedPane tabs;
+    private JTextField classCode;
+
+    private DatabaseConnectionHandler dbHandler;
 
 
-    public GUI() {
+    public GUI(DatabaseConnectionHandler dbHandler) {
+        this.dbHandler = dbHandler;
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         // initialization of panels
         initInteractive();
@@ -52,7 +60,6 @@ public class GUI extends JFrame implements ActionListener {
         JLabel outputTitle = new JLabel("RESULTS:", JLabel.LEFT);
         listPanel.add(outputTitle);
         // setup all tables and classes
-
         add(listPanel);
         listPanel.setBounds(WIDTH / 2 + 10, 20, WIDTH / 2 - 100, HEIGHT - 100);
         listPanel.setVisible(true);
@@ -80,7 +87,7 @@ public class GUI extends JFrame implements ActionListener {
         timeBox = new JComboBox<>(periods);
 
         JButton filter = new JButton("FILTER CLASSES");
-        JTextField customerIDfield = new JTextField(15);
+        customerIDfield = new JTextField(15);
         customerIDfield.setText("Customer ID to search");
         customerIDfield.addFocusListener(new FocusAdapter() {
             public void focusGained(FocusEvent e) {
@@ -133,19 +140,36 @@ public class GUI extends JFrame implements ActionListener {
 
     private void initModTab(){
         basicPanel = new JPanel(new GridLayout(0, 2, 1, 5));
-        JTextField classCode = new JTextField(15);
-        JTextField size = new JTextField(15);
+        classCode = new JTextField(12);
+        basicPanel.add(new JLabel("Class Code: "));
+        basicPanel.add(classCode);
 
-        JButton setTime = new JButton("SET TIME");
+
         JButton setDate = new JButton("SET DATE");
         setDate.setActionCommand("date");
         setDate.addActionListener(this);
-
-        selectedDate = new JTextField("Select Date", 12);
+        selectedDate = new JTextField("Set Class Start Time", 12);
         selectedDate.setEditable(false);
-        basicPanel.add(selectedDate);
         basicPanel.add(setDate);
+        basicPanel.add(selectedDate);
 
+
+        classSize = new JTextField(12);
+        basicPanel.add(new JLabel("Class Size: "));
+        basicPanel.add(classSize);
+
+        classDuration = new JTextField(12);
+        basicPanel.add(new JLabel("Class Duration: "));
+        basicPanel.add(classDuration);
+
+        JButton modify = new JButton("MODIFY");
+        JButton delete = new JButton("DELETE");
+        basicPanel.add(modify);
+        basicPanel.add(delete);
+        modify.setActionCommand("modify");
+        modify.addActionListener(this);
+        delete.setActionCommand("delete");
+        delete.addActionListener(this);
 
         modTab.add(basicPanel);
     }
@@ -159,7 +183,12 @@ public class GUI extends JFrame implements ActionListener {
             String sizeFilter = (String) sizeBox.getSelectedItem();
             System.out.println("FILTER PRESSED " + durFilter + " " + catFilter + " " + sizeFilter);
         } else if (e.getActionCommand().equals("taken")) {
-            System.out.println("TAKEN PRESSED");
+            if (customerIDfield.getText().equals("") || customerIDfield.getText().equals("Customer ID to search")) {
+                System.out.println("TAKEN PRESSED");
+            } else {
+                ClassSession[] classes = dbHandler.getGymInfo();
+                displayClasses(classes);
+            }
         } else if (e.getActionCommand().equals("cusFreq")) {
             System.out.println("CUSTOMER FREQUENCY PRESSED");
         } else if (e.getActionCommand().equals("locFreq")) {
@@ -170,7 +199,15 @@ public class GUI extends JFrame implements ActionListener {
             System.out.println("ALL CLASSES PRESSED");
         }  else if (e.getActionCommand().equals("date")) {
             dateFrame();
+        }   else if (e.getActionCommand().equals("modify")) {
+            System.out.println("MODIFY PRESSED");
+        } else if (e.getActionCommand().equals("delete")) {
+            System.out.println("delete PRESSED");
         }
+    }
+
+    private void displayClasses(ClassSession[] classes) {
+        // put classes into right side of frame
     }
 
     private void dateFrame() {
@@ -189,8 +226,7 @@ public class GUI extends JFrame implements ActionListener {
         JComboBox<String> day = new JComboBox<String>(daysList);
         dateFrame.add(new JLabel("Day"));
         dateFrame.add(day);
-        String[] monthStrings = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-        JComboBox<String> months = new JComboBox<>(monthStrings);
+       JComboBox<String> months = new JComboBox<>(monthStrings);
         dateFrame.add(new JLabel("Month"));
         dateFrame.add(months);
         JComboBox<String> year = new JComboBox<String>(years);
@@ -218,6 +254,9 @@ public class GUI extends JFrame implements ActionListener {
             // set current date in boxes to the output of the other text field
             String selDay = (String) day.getSelectedItem();
             String selMonth = (String) months.getSelectedItem();
+            if (selMonth.length() > 4) {
+                selMonth = selMonth.substring(0,3);
+            }
             String selYear = (String) year.getSelectedItem();
             String selHour = (String) hour.getSelectedItem();
             String selMinute = (String) minute.getSelectedItem();
