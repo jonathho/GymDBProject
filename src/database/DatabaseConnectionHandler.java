@@ -34,8 +34,6 @@ public class DatabaseConnectionHandler {
     }
 
     public void insertClassSession(ClassSession model) {
-        System.out.println("Executing Insert");
-
         try {
             PreparedStatement ps = connection.prepareStatement("INSERT INTO ClassSession VALUES (?,?,?,?,?,?,?)");
             ps.setInt(1, model.getClass_code());
@@ -58,8 +56,6 @@ public class DatabaseConnectionHandler {
     }
 
     public void deleteClassSession(int class_code) {
-        System.out.println("Executing Delete");
-
         try {
             PreparedStatement ps = connection.prepareStatement("DELETE FROM ClassSession WHERE class_code = ?");
             ps.setInt(1, class_code);
@@ -79,8 +75,6 @@ public class DatabaseConnectionHandler {
     }
 
     public void updateClassSession(int class_code, Timestamp start_time) {
-        System.out.println("Executing Update");
-
         try {
             PreparedStatement ps = connection.prepareStatement("UPDATE ClassSession SET start_time = ? WHERE class_code = ?");
             ps.setTimestamp(1, start_time);
@@ -100,13 +94,56 @@ public class DatabaseConnectionHandler {
         }
     }
 
-    public ClassSession[] selectClassSession(String cat, Timestamp s_time) {
+    public ClassSession[] selectClassSession(String duration, String cat, String class_size) {
         //TODO: select classes with specific categories and times
         System.out.println("Executing Select");
         ArrayList<ClassSession> result = new ArrayList<ClassSession>();
 
+        int oneClause = 0;
+        String categoryQ = "";
+        if (!cat.equals("all")){
+            categoryQ = " category = " + "\'" + cat + "\'";
+            oneClause = 1;
+        }
+        String durationQ = "";
+        if (duration.equals("60+")){
+            durationQ = " duration > " + 60;
+            oneClause = 1;
+        } else if (!duration.equals("all")){
+            durationQ = " duration = " + duration;
+            oneClause = 1;
+        }
+
+        /*String timeQ = "";
+        if (!timePeriod.equals("all")){
+            String days = "1";
+            if (timePeriod.equals("3 days")) {
+                days = "3";
+            } else if (timePeriod.equals("1 week")){
+                days = "7";
+            } else if (timePeriod.equals("1 month")) {
+                days = "31";
+            } else {
+                days = "1";
+            }
+            timeQ = " WHERE start_time < " + days;
+        }*/
+
+        String sizeQ = "";
+        if (class_size.equals("30+")){
+            sizeQ = " capacity > " + 30;
+            oneClause = 1;
+        } else if (!class_size.equals("all")){
+            sizeQ = " capacity = " + class_size;
+            oneClause = 1;
+        }
+        String where = (oneClause == 1) ? " WHERE" : "";
+        String delim1 = (categoryQ.equals("") || (durationQ.equals("") && sizeQ.equals("")) ? "" : " AND ");
+        String delim2 = (durationQ.equals("") ||(sizeQ.equals("")) ? "" : " AND ");
+
         try {
-            String query = "SELECT * FROM ClassSession WHERE Category = " + cat;
+            String query = "SELECT * FROM ClassSession" + where + categoryQ + delim1+  durationQ + delim2 + sizeQ;
+            System.out.println(query);
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
