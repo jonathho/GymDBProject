@@ -83,8 +83,8 @@ public class DatabaseConnectionHandler {
         //TODO
 
         try {
-            String query = "SELECT * FROM SIGNSUP S, CLASSSESSION CS, CUSTOMER C WHERE " +
-                    "CS.CLASS_CODE = S.CLASS_CODE and S.CID = C.CID and C.CID = " + cid;
+            String query = "SELECT * FROM SIGNSUP S, CLASSSESSION C WHERE " +
+                    "C.CLASS_CODE = S.CLASS_CODE and S.CID = " + cid;
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 

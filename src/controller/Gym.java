@@ -23,30 +23,34 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
     }
 
     private void start() {
-        new GUI();
-//        loginWindow = new LoginWindow();
-//        loginWindow.showFrame(this);
+
+        loginWindow = new LoginWindow();
+        loginWindow.showFrame(this);
     }
 
     public void login(String username, String password) {
         boolean didConnect = dbHandler.login(username, password);
 
-//        if (didConnect) {
-//            loginWindow.dispose();
-//
-////            //TODO: stop here and use gui when ready
-////            TerminalTransactions transactions = new TerminalTransactions();
-////            transactions.setupDatabase(this);
-////            transactions.showMainMenu(this);
-//        } else {
-//            loginWindow.handleLoginFailed();
-//
-//            if (loginWindow.hasReachedMaxLoginAttempts()) {
-//                loginWindow.dispose();
-//                System.out.println("You have reached your maximum number of login attempts.");
-//                System.exit(-1);
-//            }
-//        }
+        if (didConnect) {
+            loginWindow.dispose();
+
+
+//            TODO: stop here and use gui when ready
+            new GUI();
+            this.showClassSessionTerminal();
+
+//            TerminalTransactions transactions = new TerminalTransactions();
+//            transactions.setupDatabase(this);
+//            transactions.showMainMenu(this);
+        } else {
+            loginWindow.handleLoginFailed();
+
+            if (loginWindow.hasReachedMaxLoginAttempts()) {
+                loginWindow.dispose();
+                System.out.println("You have reached your maximum number of login attempts.");
+                System.exit(-1);
+            }
+        }
     }
 
     /**
@@ -157,6 +161,5 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
     public static void main(String[] args) {
         Gym gym = new Gym();
         gym.start();
-        gym.showClassSessionTerminal();
     }
 }
