@@ -1,6 +1,7 @@
 package database;
 
 import model.ClassSession;
+import model.ProjectionClass;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -35,7 +36,8 @@ public class DatabaseConnectionHandler {
 
     public void insertClassSession(ClassSession model) {
         try {
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO ClassSession VALUES (?,?,?,?,?,?,?)");
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO CLASSSESSION VALUES (?,?,?,?,?,?,?)");
+            //TODO: need to check for nulls?
             ps.setInt(1, model.getClass_code());
             ps.setString(2, model.getAddress());
             ps.setInt(3, model.getSIN());
@@ -43,7 +45,6 @@ public class DatabaseConnectionHandler {
             ps.setString(5, model.getCategory());
             ps.setInt(6, model.getDuration());
             ps.setInt(7, model.getCapacity());
-            //TODO: need to check for nulls?
 
             ps.executeUpdate();
             connection.commit();
@@ -57,7 +58,7 @@ public class DatabaseConnectionHandler {
 
     public void deleteClassSession(int class_code) {
         try {
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM ClassSession WHERE class_code = ?");
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM CLASSSESSION WHERE class_code = ?");
             ps.setInt(1, class_code);
 
             int rowCount = ps.executeUpdate();
@@ -76,7 +77,7 @@ public class DatabaseConnectionHandler {
 
     public void updateClassSession(int class_code, Timestamp start_time) {
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE ClassSession SET start_time = ? WHERE class_code = ?");
+            PreparedStatement ps = connection.prepareStatement("UPDATE CLASSSESSION SET start_time = ? WHERE class_code = ?");
             ps.setTimestamp(1, start_time);
             ps.setInt(2, class_code);
 
@@ -100,7 +101,7 @@ public class DatabaseConnectionHandler {
         ArrayList<ClassSession> result = new ArrayList<ClassSession>();
 
         try {
-            String query = "SELECT * FROM ClassSession WHERE category = "+ cat +" AND start_time = "+ s_time;
+            String query = "SELECT * FROM CLASSSESSION WHERE category = "+ cat +" AND start_time = "+ s_time;
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
@@ -117,6 +118,7 @@ public class DatabaseConnectionHandler {
                 result.add(classSession);
             }
 
+            //TODO: might not need to close resultsets, autoclose
             rs.close();
             stmt.close();
 
@@ -128,18 +130,50 @@ public class DatabaseConnectionHandler {
         return result.toArray(new ClassSession[result.size()]);
     }
 
+    public ProjectionClass[] projectAllClassSessions() {
+        System.out.println("executing projection");
+        ArrayList<ProjectionClass> result = new ArrayList<ProjectionClass>();
+
+        try {
+            String query = "SELECT address, start_time, category, duration, capacity FROM CLASSSESSION";
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                ProjectionClass projectionClass = new ProjectionClass(
+                        rs.getString("address"),
+                        rs.getTimestamp("start_time"),
+                        rs.getString("category"),
+                        rs.getInt("duration"),
+                        rs.getInt("capacity")
+                );
+                result.add(projectionClass);
+            }
+
+            //TODO: might not need to close resultsets, autoclose
+            rs.close();
+            stmt.close();
+
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result.toArray(new ProjectionClass[result.size()]);
+
+    }
+
     public ClassSession[] getGymInfo() {
         System.out.println("executing select *");
         ArrayList<ClassSession> result = new ArrayList<ClassSession>();
         //TODO
 
         try {
-            String query = "SELECT * FROM classSession";
+            String query = "SELECT * FROM CLASSSESSION";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
             while(rs.next()) {
-                ClassSession classSession = new ClassSession(
+                ClassSession CLASSSESSION = new ClassSession(
                         rs.getInt("class_code"),
                         rs.getString("address"),
                         rs.getInt("SIN"),
@@ -148,7 +182,7 @@ public class DatabaseConnectionHandler {
                         rs.getInt("duration"),
                         rs.getInt("capacity")
                 );
-                result.add(classSession);
+                result.add(CLASSSESSION);
             }
 
             rs.close();
@@ -172,7 +206,7 @@ public class DatabaseConnectionHandler {
             ResultSet rs = stmt.executeQuery(query);
 
             while(rs.next()) {
-                ClassSession classSession = new ClassSession(
+                ClassSession CLASSSESSION = new ClassSession(
                         rs.getInt("class_code"),
                         rs.getString("address"),
                         rs.getInt("SIN"),
@@ -181,7 +215,7 @@ public class DatabaseConnectionHandler {
                         rs.getInt("duration"),
                         rs.getInt("capacity")
                 );
-                result.add(classSession);
+                result.add(CLASSSESSION);
             }
 
             rs.close();
@@ -233,8 +267,8 @@ public class DatabaseConnectionHandler {
 
             //TODO: loop through to drop all tables
             while(rs.next()) {
-                if(rs.getString(1).toLowerCase().equals("ClassSession")) {
-                    stmt.execute("DROP TABLE ClassSession");
+                if(rs.getString(1).toLowerCase().equals("classsession")) {
+                    stmt.execute("DROP TABLE CLASSSESSION");
                     break;
                 }
             }
