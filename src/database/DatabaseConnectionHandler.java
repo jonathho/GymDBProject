@@ -144,7 +144,7 @@ public class DatabaseConnectionHandler {
         String delim2 = (durationQ.equals("") ||(sizeQ.equals("")) ? "" : " AND ");
 
         try {
-            String query = "SELECT * FROM ClassSession" + where + categoryQ + delim1+  durationQ + delim2 + sizeQ;
+            String query = "SELECT * FROM ClassSession " + where + categoryQ + delim1+  durationQ + delim2 + sizeQ;
             System.out.println(query);
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -275,14 +275,14 @@ public class DatabaseConnectionHandler {
         ArrayList<AggregSignsUp> result = new ArrayList<AggregSignsUp>();
 
         try {
-            String query = "SELECT COUNT(DISTINCT confirmation) FROM SIGNSUP WHERE CID = " + cid;
+            String query = "SELECT COUNT(DISTINCT confirmation) as num_classes FROM SIGNSUP WHERE CID = " + cid;
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
             while(rs.next()) {
                 AggregSignsUp aggregSignsUp = new AggregSignsUp(
-                        rs.getInt("cid"),
-                        rs.getInt("numClasses")
+                        cid,
+                        rs.getInt("num_classes")
                 );
                 result.add(aggregSignsUp);
             }

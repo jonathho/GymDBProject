@@ -43,7 +43,9 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
 
 //            //TODO: stop here and use gui when ready
             new GUI(dbHandler);
-            this.showClassSessionTerminal();
+            this.printResults();
+            this.printProjections();
+            this.printAggregates(20);
 //            TerminalTransactions transactions = new TerminalTransactions();
 //            transactions.setupDatabase(this);
 //            transactions.showMainMenu(this);
@@ -82,15 +84,14 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
     /**
      * Displays information about various class sessions on the terminal
      */
-    public void showClassSessionTerminal() {
+    public void printResults() {
         //TODO
-        insertClassSession(new ClassSession(420, "2891 Laurel St", 862245315,
-                new Timestamp(System.currentTimeMillis()), "Yoga", 45, 10));
-        updateClassSession(441, new Timestamp(System.currentTimeMillis()));
-        updateClassSession(420, new Timestamp(System.currentTimeMillis()));
-        Timestamp ts = Timestamp.valueOf("2022-03-06 18:00:00");
-        String category = "'Cycling'";
-        ClassSession[] classSessions = dbHandler.selectClassSession("30", category, "45");
+//        insertClassSession(new ClassSession(420, "2891 Laurel St", 862245315,
+//                new Timestamp(System.currentTimeMillis()), "Yoga", 45, 10));
+        // deleteClassSession(420);
+        // updateClassSession(441, new Timestamp(System.currentTimeMillis()));
+        ClassSession[] classSessions = dbHandler.selectClassSession("60", "Cycling", "25");
+
 
         System.out.printf("%-15.15s", "class code");
         System.out.printf("%-35.35s", "address");
@@ -125,6 +126,53 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
         }
     }
 
+    public void printProjections() {
+        ProjectionClass[] ps = dbHandler.projectAllClassSessions();
+
+        System.out.printf("%-35.35s", "address");
+        System.out.printf("%-25.25s", "start time");
+        System.out.printf("%-15.15s", "category");
+        System.out.printf("%-15.15s", "duration");
+        System.out.printf("%-15.15s", "capacity");
+        System.out.println();
+
+        for (int i = 0; i < ps.length; i++) {
+            ProjectionClass cs = ps[i];
+
+
+            // simplified output formatting; truncation may occur
+            if (cs.getAddress() == null) {
+                System.out.printf("%-35.35s", " ");
+            } else {
+                System.out.printf("%-35.35s", cs.getAddress());
+            }
+            if (cs.getStart_time().toString() == "") {
+                System.out.printf("%-25.25s", " ");
+            } else {
+                System.out.printf("%-25.25s", cs.getStart_time().toString());
+            }
+            System.out.printf("%-15.15s", cs.getCategory());
+            System.out.printf("%-15.15s", cs.getDuration());
+            System.out.printf("%-15.15s", cs.getCapacity());
+            System.out.println();
+        }
+    }
+
+    public void printAggregates(int cid) {
+        AggregSignsUp[] as = dbHandler.aggregSignsUps(cid);
+
+        System.out.printf("%-15.15s", "cid");
+        System.out.printf("%-15.15s", "num_classes");
+        System.out.println();
+
+        for (int i = 0; i < as.length; i++) {
+            AggregSignsUp a = as[i];
+
+            System.out.printf("%-15.15s", a.getCid());
+            System.out.printf("%-15.15s", a.getNumClasses());
+            System.out.println();
+        }
+    }
     /**
      * Displays information about various class sessions on the UI
      */
