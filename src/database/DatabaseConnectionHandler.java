@@ -35,7 +35,7 @@ public class DatabaseConnectionHandler {
 
     public void insertClassSession(ClassSession model) {
         try {
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO classSession VALUES (?,?,?,?,?,?,?)");
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO ClassSession VALUES (?,?,?,?,?,?,?)");
             ps.setInt(1, model.getClass_code());
             ps.setString(2, model.getAddress());
             ps.setInt(3, model.getSIN());
@@ -57,7 +57,7 @@ public class DatabaseConnectionHandler {
 
     public void deleteClassSession(int class_code) {
         try {
-            PreparedStatement ps = connection.prepareStatement("DELETE FROM classSession WHERE class_code = ?");
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM ClassSession WHERE class_code = ?");
             ps.setInt(1, class_code);
 
             int rowCount = ps.executeUpdate();
@@ -76,7 +76,7 @@ public class DatabaseConnectionHandler {
 
     public void updateClassSession(int class_code, Timestamp start_time) {
         try {
-            PreparedStatement ps = connection.prepareStatement("UPDATE classSession SET start_time = ? WHERE class_code = ?");
+            PreparedStatement ps = connection.prepareStatement("UPDATE ClassSession SET start_time = ? WHERE class_code = ?");
             ps.setTimestamp(1, start_time);
             ps.setInt(2, class_code);
 
@@ -92,6 +92,40 @@ public class DatabaseConnectionHandler {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
             rollbackConnection();
         }
+    }
+
+    public ClassSession[] selectClassSession(String cat, Timestamp s_time) {
+        //TODO: select classes with specific categories and times
+        System.out.println("Executing Select");
+        ArrayList<ClassSession> result = new ArrayList<ClassSession>();
+
+        try {
+            String query = "SELECT * FROM ClassSession WHERE category = "+ cat +" AND start_time = "+ s_time;
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+                ClassSession classSession = new ClassSession(
+                        rs.getInt("class_code"),
+                        rs.getString("address"),
+                        rs.getInt("SIN"),
+                        rs.getTimestamp("start_time"),
+                        rs.getString("category"),
+                        rs.getInt("duration"),
+                        rs.getInt("capacity")
+                );
+                result.add(classSession);
+            }
+
+            rs.close();
+            stmt.close();
+
+        } catch (SQLException e) {
+            //TODO: correct thing to do? Don't need to rollback b/c no modification?
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result.toArray(new ClassSession[result.size()]);
     }
 
     public ClassSession[] getGymInfo() {
@@ -128,20 +162,21 @@ public class DatabaseConnectionHandler {
     }
 
     public void databaseSetup() {
-        dropClassSessionTableIfExists();
+        dropAllGymTablesIfExists();
 
-        //TODO
+        //TODO: might not need this, just run sql script to populate
+
     }
 
-    private void dropClassSessionTableIfExists() {
+    private void dropAllGymTablesIfExists() {
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("select table_name from user_tables");
 
-            //TODO: check naming on these later
+            //TODO: loop through to drop all tables
             while(rs.next()) {
-                if(rs.getString(1).toLowerCase().equals("classSession")) {
-                    stmt.execute("DROP TABLE classSession");
+                if(rs.getString(1).toLowerCase().equals("ClassSession")) {
+                    stmt.execute("DROP TABLE ClassSession");
                     break;
                 }
             }
