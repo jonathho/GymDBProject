@@ -1,5 +1,6 @@
 package database;
 
+import model.AggregSignsUp;
 import model.ClassSession;
 import model.ProjectionClass;
 
@@ -159,7 +160,6 @@ public class DatabaseConnectionHandler {
         }
 
         return result.toArray(new ProjectionClass[result.size()]);
-
     }
 
     public ClassSession[] getGymInfo() {
@@ -206,7 +206,7 @@ public class DatabaseConnectionHandler {
             ResultSet rs = stmt.executeQuery(query);
 
             while(rs.next()) {
-                ClassSession CLASSSESSION = new ClassSession(
+                ClassSession classSession = new ClassSession(
                         rs.getInt("class_code"),
                         rs.getString("address"),
                         rs.getInt("SIN"),
@@ -215,7 +215,7 @@ public class DatabaseConnectionHandler {
                         rs.getInt("duration"),
                         rs.getInt("capacity")
                 );
-                result.add(CLASSSESSION);
+                result.add(classSession);
             }
 
             rs.close();
@@ -225,6 +225,31 @@ public class DatabaseConnectionHandler {
         }
 
         return result.toArray(new ClassSession[result.size()]);
+    }
+
+    public AggregSignsUp[] aggregSignsUps(int cid) {
+        System.out.println("executing aggregation");
+        ArrayList<AggregSignsUp> result = new ArrayList<AggregSignsUp>();
+
+        try {
+            String query = "SELECT COUNT(DISTINCT confirmation) FROM SIGNSUP WHERE CID = " + cid;
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while(rs.next()) {
+                AggregSignsUp aggregSignsUp = new AggregSignsUp(
+                        rs.getInt("cid"),
+                        rs.getInt("numClasses")
+                );
+                result.add(aggregSignsUp);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch(SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+        return result.toArray(new AggregSignsUp[result.size()]);
     }
 
 
