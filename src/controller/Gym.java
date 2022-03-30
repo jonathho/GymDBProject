@@ -24,7 +24,6 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
 
     private void start() {
         new GUI();
-        login("", "");
 //        loginWindow = new LoginWindow();
 //        loginWindow.showFrame(this);
     }
@@ -76,7 +75,7 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
      */
     public void showClassSessionTerminal() {
         //TODO
-        ClassSession[] classSessions = dbHandler.getGymInfo();
+        ClassSession[] classSessions = dbHandler.getJoinInfo(20);
 
         System.out.printf("%-15.15s", "class code");
         System.out.printf("%-35.35s", "address");
