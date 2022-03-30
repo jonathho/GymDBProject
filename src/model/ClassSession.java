@@ -46,7 +46,7 @@ public class ClassSession {
         return duration;
     }
 
-    public int getcapacity() {
+    public int getCapacity() {
         return capacity;
     }
 }

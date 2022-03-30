@@ -42,7 +42,7 @@ public class DatabaseConnectionHandler {
             ps.setTimestamp(4, model.getStart_time());
             ps.setString(5, model.getCategory());
             ps.setInt(6, model.getDuration());
-            ps.setInt(7, model.getSize());
+            ps.setInt(7, model.getCapacity());
             //TODO: need to check for nulls?
 
             ps.executeUpdate();

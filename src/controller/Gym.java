@@ -114,7 +114,7 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
             }
             System.out.printf("%-15.15s", classSession.getCategory());
             System.out.printf("%-15.15s", classSession.getDuration());
-            System.out.printf("%-15.15s", classSession.getcapacity());
+            System.out.printf("%-15.15s", classSession.getCapacity());
             System.out.println();
         }
     }
