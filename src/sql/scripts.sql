@@ -16,52 +16,6 @@ VALUES (40, 4164591804);
 INSERT INTO Customer
 VALUES (50, 7785479093);
 
-CREATE TABLE SignsUp
-(
-    cid          INTEGER,
-    class_code   INTEGER,
-    confirmation INTEGER,
-    PRIMARY KEY (cid, class_code),
-    FOREIGN KEY (cid) references Customer ON DELETE CASCADE,
-    FOREIGN KEY (class_code) references ClassSession ON DELETE CASCADE
-);
-
-INSERT INTO SignsUp
-VALUES (40, 441, 664311);
-INSERT INTO SignsUp
-VALUES (45, 313, 331265);
-INSERT INTO SignsUp
-VALUES (15, 317, 333153);
-INSERT INTO SignsUp
-VALUES (55, 304, 887432);
-INSERT INTO SignsUp
-VALUES (20, 121, 754473);
-
-CREATE TABLE ClassSession
-(
-    class_code INTEGER,
-    address    VARCHAR(100) NOT NULL,
-    SIN        INTEGER      NOT NULL,
-    start_time timestamp,
-    category   VARCHAR(100),
-    duration   INTEGER,
-    size       INTEGER,
-    PRIMARY KEY (class_code),
-    FOREIGN KEY (address) references Location ON DELETE CASCADE,
-    FOREIGN KEY (SIN) references Employee ON DELETE CASCADE
-);
-
-INSERT INTO ClassSession
-VALUES (441, '2891 Laurel St', 862245315, TO_TIMESTAMP('2022-10-03 16:30:00'), 'Yoga', 45, 10);
-INSERT INTO ClassSession
-VALUES (313, '5728 University Blvd #103', 964327815, TO_TIMESTAMP('2022-03-03 8:30:00'), 'Private', 90, 1);
-INSERT INTO ClassSession
-VALUES (317, '2637 Enterprise Way', 247556899, TO_TIMESTAMP('2022-03-02 8:30:00'), 'Cycling', 90, 45);
-INSERT INTO ClassSession
-VALUES (304, '5728 University Blvd #103', 124789643, TO_TIMESTAMP('2022-03-06 17:00:00'), 'Cycling', 60, 25);
-INSERT INTO ClassSession
-VALUES (121, '5728 University Blvd #103', 359846244, TO_TIMESTAMP('2022-03-06 18:00:00'), 'Cycling', 60, 25);
-
 CREATE TABLE Employee
 (
     SIN         INTEGER,
@@ -81,11 +35,28 @@ INSERT INTO Employee
 VALUES (359846244, 6045533944, 16, 'Elise M. McKinney');
 
 INSERT INTO Employee
-VALUES (681659399, 6045531986, 20, 'Michelle C. Drake');
+VALUES (862245315, 6045531986, 20, 'Michelle C. Drake');
 
 INSERT INTO Employee
-VALUES (779635215, 6047896542, 15, 'Gerald E. Carter');
+VALUES (964327815, 6047896542, 15, 'Gerald E. Carter');
 
+CREATE TABLE GymFranchise
+(
+    gid  INTEGER,
+    name VARCHAR(100),
+    PRIMARY KEY (gid)
+);
+
+INSERT INTO GymFranchise
+VALUES (2, 'Fold''s Gym');
+INSERT INTO GymFranchise
+VALUES (14, 'Chicken Coop');
+INSERT INTO GymFranchise
+VALUES (1, 'Flat Earth Fitness');
+INSERT INTO GymFranchise
+VALUES (3, 'Sometimes Fitness');
+INSERT INTO GymFranchise
+VALUES (6, 'NWT Gyms');
 
 CREATE TABLE Location
 (
@@ -108,21 +79,48 @@ VALUES ('32555 London Ave', 1, 500, 7783386729);
 INSERT INTO Location
 VALUES ('5728 University Blvd #103', 14, 200, 6041804872);
 
-CREATE TABLE GymFranchise
+CREATE TABLE ClassSession
 (
-    gid  INTEGER,
-    name VARCHAR(100),
-    PRIMARY KEY (gid)
+    class_code INTEGER,
+    address    VARCHAR(100) NOT NULL,
+    SIN        INTEGER      NOT NULL,
+    start_time timestamp,
+    category   VARCHAR(100),
+    duration   INTEGER,
+    capacity       INTEGER,
+    PRIMARY KEY (class_code),
+    FOREIGN KEY (address) references Location ON DELETE CASCADE,
+    FOREIGN KEY (SIN) references Employee ON DELETE CASCADE
 );
 
-INSERT INTO GymFranchise
-VALUES (2, 'Fold''s Gym');
-INSERT INTO GymFranchise
-VALUES (14, 'Chicken Coop');
-INSERT INTO GymFranchise
-VALUES (1, 'Flat Earth Fitness');
-INSERT INTO GymFranchise
-VALUES (3, 'Sometimes Fitness');
-INSERT INTO GymFranchise
-VALUES (6, 'NWT Gyms');
+INSERT INTO ClassSession
+VALUES (441, '2891 Laurel St', 862245315, TO_TIMESTAMP('2022-10-03 16:30:00'), 'Yoga', 45, 10);
+INSERT INTO ClassSession
+VALUES (313, '5728 University Blvd #103', 964327815, TO_TIMESTAMP('2022-03-03 8:30:00'), 'Private', 90, 1);
+INSERT INTO ClassSession
+VALUES (317, '2637 Enterprise Way', 247556899, TO_TIMESTAMP('2022-03-02 8:30:00'), 'Cycling', 90, 45);
+INSERT INTO ClassSession
+VALUES (304, '5728 University Blvd #103', 124789643, TO_TIMESTAMP('2022-03-06 17:00:00'), 'Cycling', 60, 25);
+INSERT INTO ClassSession
+VALUES (121, '5728 University Blvd #103', 359846244, TO_TIMESTAMP('2022-03-06 18:00:00'), 'Cycling', 60, 25);
 
+CREATE TABLE SignsUp
+(
+    cid          INTEGER,
+    class_code   INTEGER,
+    confirmation INTEGER,
+    PRIMARY KEY (cid, class_code),
+    FOREIGN KEY (cid) references Customer ON DELETE CASCADE,
+    FOREIGN KEY (class_code) references ClassSession ON DELETE CASCADE
+);
+
+INSERT INTO SignsUp
+VALUES (10, 441, 664311);
+INSERT INTO SignsUp
+VALUES (20, 313, 331265);
+INSERT INTO SignsUp
+VALUES (30, 317, 333153);
+INSERT INTO SignsUp
+VALUES (40, 304, 887432);
+INSERT INTO SignsUp
+VALUES (50, 121, 754473);

@@ -48,7 +48,32 @@ public class DatabaseConnectionHandler {
     public ClassSession[] getGymInfo() {
         ArrayList<ClassSession> result = new ArrayList<ClassSession>();
         //TODO
-        return null;
+
+        try {
+            String query = "SELECT * FROM classSession";
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            while(rs.next()) {
+                ClassSession classSession = new ClassSession(
+                        rs.getInt("class_code"),
+                        rs.getString("address"),
+                        rs.getInt("SIN"),
+                        rs.getTimestamp("start_time"),
+                        rs.getString("category"),
+                        rs.getInt("duration"),
+                        rs.getInt("size")
+                );
+                result.add(classSession);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result.toArray(new ClassSession[result.size()]);
     }
 
 
