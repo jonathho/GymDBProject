@@ -114,21 +114,6 @@ public class DatabaseConnectionHandler {
             oneClause = 1;
         }
 
-        /*String timeQ = "";
-        if (!timePeriod.equals("all")){
-            String days = "1";
-            if (timePeriod.equals("3 days")) {
-                days = "3";
-            } else if (timePeriod.equals("1 week")){
-                days = "7";
-            } else if (timePeriod.equals("1 month")) {
-                days = "31";
-            } else {
-                days = "1";
-            }
-            timeQ = " WHERE start_time < " + days;
-        }*/
-
         String sizeQ = "";
         if (class_size.equals("30+")){
             sizeQ = " capacity > " + 30;

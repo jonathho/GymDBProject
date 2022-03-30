@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.util.HashMap;
 
 public class GUI extends JFrame implements ActionListener {
     public static final int WIDTH = 400;
@@ -20,6 +21,9 @@ public class GUI extends JFrame implements ActionListener {
     private String[] classSizes = {"all", "1", "10", "30", "30+"};
     private String[] periods = {"all", "1 day", "3 days", "1 week", "1 month"};
     private String[] monthStrings = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+    HashMap hm = new HashMap();
+
+
 
     private JComboBox<String> durBox;
     private JComboBox<String> catBox;
@@ -46,6 +50,7 @@ public class GUI extends JFrame implements ActionListener {
         this.dbHandler = dbHandler;
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         // initialization of panels
+        monthMap();
         initInteractive();
         initList();
         initButtons();
@@ -55,6 +60,21 @@ public class GUI extends JFrame implements ActionListener {
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
+    }
+
+    private void monthMap() {
+        hm.put("January", 1);
+        hm.put("February", 2);
+        hm.put("March", 3);
+        hm.put("April", 4);
+        hm.put("May", 5);
+        hm.put("June", 6);
+        hm.put("July", 7);
+        hm.put("August", 8);
+        hm.put("September", 9);
+        hm.put("October", 10);
+        hm.put("November", 11);
+        hm.put("December", 12);
     }
 
     private void initList() {
@@ -269,7 +289,10 @@ public class GUI extends JFrame implements ActionListener {
         dateFrame.add(hour);
 
         String[] minutes = new String[60];
-        for (int i = 0; i < 60; i++){
+        for (int i = 0; i < 10; i++){
+            minutes[i] = "0" + String.valueOf(i);
+        }
+        for (int i = 10; i < 60; i++){
             minutes[i] = String.valueOf(i);
         }
         JComboBox<String> minute = new JComboBox<String>(minutes);
@@ -280,13 +303,11 @@ public class GUI extends JFrame implements ActionListener {
             // set current date in boxes to the output of the other text field
             String selDay = (String) day.getSelectedItem();
             String selMonth = (String) months.getSelectedItem();
-            if (selMonth.length() > 4) {
-                selMonth = selMonth.substring(0,3);
-            }
+            int monthNum = (int) hm.get(selMonth);
             String selYear = (String) year.getSelectedItem();
             String selHour = (String) hour.getSelectedItem();
             String selMinute = (String) minute.getSelectedItem();
-            selectedDate.setText(String.format("%s %s, %s, %s:%s", selMonth, selDay, selYear, selHour, selMinute));
+            selectedDate.setText(String.format("%s-%s-%s %s:%s:00", selYear, monthNum, selDay, selHour, selMinute));
             dateFrame.dispose();
         });
         dateFrame.add(finish);
