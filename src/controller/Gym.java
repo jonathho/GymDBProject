@@ -90,7 +90,7 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
         updateClassSession(420, new Timestamp(System.currentTimeMillis()));
         Timestamp ts = Timestamp.valueOf("2022-03-06 18:00:00");
         String category = "'Cycling'";
-        ClassSession[] classSessions = dbHandler.selectClassSession(category, ts);
+        ClassSession[] classSessions = dbHandler.selectClassSession("30", category, "45");
 
         System.out.printf("%-15.15s", "class code");
         System.out.printf("%-35.35s", "address");
