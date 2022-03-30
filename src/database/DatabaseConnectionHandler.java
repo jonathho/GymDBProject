@@ -62,7 +62,7 @@ public class DatabaseConnectionHandler {
                         rs.getTimestamp("start_time"),
                         rs.getString("category"),
                         rs.getInt("duration"),
-                        rs.getInt("size")
+                        rs.getInt("capacity")
                 );
                 result.add(classSession);
             }
@@ -103,7 +103,7 @@ public class DatabaseConnectionHandler {
     }
 
     public void databaseSetup() {
-        dropClassSessionTableIfExists();
+        //dropClassSessionTableIfExists();
 
         //TODO
     }
