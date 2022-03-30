@@ -25,25 +25,22 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
     private void start() {
 
         // temporary
-        new GUI(dbHandler);
+        //new GUI(dbHandler);
 
-        //loginWindow = new LoginWindow();
-        //loginWindow.showFrame(this);
+        loginWindow = new LoginWindow();
+        loginWindow.showFrame(this);
 
     }
 
     public void login(String username, String password) {
-        boolean didConnect = dbHandler.login(username, password);
+        boolean didConnect = dbHandler.login("ora_kevin246", "a83231506");
 
         if (didConnect) {
             loginWindow.dispose();
 
-
-            
-
 //            //TODO: stop here and use gui when ready
             new GUI(dbHandler);
-            this.showClassSessionTerminal();
+            //this.showClassSessionTerminal();
 //            TerminalTransactions transactions = new TerminalTransactions();
 //            transactions.setupDatabase(this);
 //            transactions.showMainMenu(this);
