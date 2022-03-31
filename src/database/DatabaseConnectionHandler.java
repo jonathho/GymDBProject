@@ -268,21 +268,23 @@ public class DatabaseConnectionHandler {
         return result.toArray(new ClassSession[result.size()]);
     }
 
-    public AggregSignsUp[] aggregSignsUps(int cid) {
+    public TotalExerciseTime[] aggregSignsUps(int cid) {
         System.out.println("executing aggregation");
-        ArrayList<AggregSignsUp> result = new ArrayList<AggregSignsUp>();
+        ArrayList<TotalExerciseTime> result = new ArrayList<TotalExerciseTime>();
 
         try {
-            String query = "SELECT COUNT(DISTINCT confirmation) as num_classes FROM SIGNSUP WHERE CID = " + cid;
+            String query = "SELECT SUM(duration) over () as totalExerciseTime " +
+                    "FROM CUSTOMER C, SIGNSUP S, CLASSSESSION CS " +
+                    "WHERE C.CID = S.CID AND S.CLASS_CODE = CS.CLASS_CODE AND CID = " + cid;
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
             while(rs.next()) {
-                AggregSignsUp aggregSignsUp = new AggregSignsUp(
+                TotalExerciseTime totalExerciseTime = new TotalExerciseTime(
                         cid,
-                        rs.getInt("num_classes")
+                        rs.getInt("totalExerciseTime")
                 );
-                result.add(aggregSignsUp);
+                result.add(totalExerciseTime);
             }
 
             rs.close();
@@ -290,7 +292,7 @@ public class DatabaseConnectionHandler {
         } catch(SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
-        return result.toArray(new AggregSignsUp[result.size()]);
+        return result.toArray(new TotalExerciseTime[result.size()]);
     }
 
     /**

@@ -159,14 +159,14 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
     }
 
     public void printAggregates(int cid) {
-        AggregSignsUp[] as = dbHandler.aggregSignsUps(cid);
+        TotalExerciseTime[] as = dbHandler.aggregSignsUps(cid);
 
         System.out.printf("%-15.15s", "cid");
         System.out.printf("%-15.15s", "num_classes");
         System.out.println();
 
         for (int i = 0; i < as.length; i++) {
-            AggregSignsUp a = as[i];
+            TotalExerciseTime a = as[i];
 
             System.out.printf("%-15.15s", a.getCid());
             System.out.printf("%-15.15s", a.getNumClasses());
