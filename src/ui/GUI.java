@@ -216,7 +216,7 @@ public class GUI extends JFrame implements ActionListener {
                 displayClasses(classes);
             }
         } else if (e.getActionCommand().equals("cusFreq")) {
-            AggregSignsUp[] classes = dbHandler.aggregSignsUps(Integer.parseInt(customerIDfield.getText()));
+            TotalExerciseTime[] classes = dbHandler.aggregSignsUps(Integer.parseInt(customerIDfield.getText()));
             displayAggregation(classes);
         } else if (e.getActionCommand().equals("locFreq")) {
             ClassesPerLocation[] classesLocations = dbHandler.findNumClassesAllLocations();
@@ -278,8 +278,8 @@ public class GUI extends JFrame implements ActionListener {
         }
     }
 
-    private void displayAggregation(AggregSignsUp[] classes) {
-        System.out.println(classes[0].getNumClasses());
+    private void displayAggregation(TotalExerciseTime[] classes) {
+        System.out.println(classes[0].getCid());
         /*if (classes.length == 0){
             msg = new JFrame();
             JOptionPane.showMessageDialog(msg, "No classes");

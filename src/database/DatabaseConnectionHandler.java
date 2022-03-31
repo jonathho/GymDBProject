@@ -267,16 +267,16 @@ public class DatabaseConnectionHandler {
         ArrayList<TotalExerciseTime> result = new ArrayList<TotalExerciseTime>();
 
         try {
-            String query = "SELECT SUM(duration) over () as totalExerciseTime " +
+            String query = "SELECT SUM(duration) as total_exercise_time " +
                     "FROM CUSTOMER C, SIGNSUP S, CLASSSESSION CS " +
-                    "WHERE C.CID = S.CID AND S.CLASS_CODE = CS.CLASS_CODE AND CID = " + cid;
+                    "WHERE C.CID = S.CID AND S.CLASS_CODE = CS.CLASS_CODE AND C.CID = " + cid;
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
             while(rs.next()) {
                 TotalExerciseTime totalExerciseTime = new TotalExerciseTime(
                         cid,
-                        rs.getInt("totalExerciseTime")
+                        rs.getInt("total_exercise_time")
                 );
                 result.add(totalExerciseTime);
             }
