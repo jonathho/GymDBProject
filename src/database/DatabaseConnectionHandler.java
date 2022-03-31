@@ -45,6 +45,8 @@ public class DatabaseConnectionHandler {
             ps.setInt(6, model.getDuration());
             ps.setInt(7, model.getCapacity());
 
+            System.out.println("Executing query: " + ps + "\n");
+
             ps.executeUpdate();
             connection.commit();
 
@@ -59,6 +61,8 @@ public class DatabaseConnectionHandler {
         try {
             PreparedStatement ps = connection.prepareStatement("DELETE FROM CLASSSESSION WHERE class_code = ?");
             ps.setInt(1, class_code);
+
+            System.out.println("Executing query: " + ps + "\n");
 
             int rowCount = ps.executeUpdate();
             if (rowCount == 0) {
@@ -79,6 +83,8 @@ public class DatabaseConnectionHandler {
             PreparedStatement ps = connection.prepareStatement("UPDATE CLASSSESSION SET start_time = ? WHERE class_code = ?");
             ps.setTimestamp(1, start_time);
             ps.setInt(2, class_code);
+
+            System.out.println("Executing query: " + ps + "\n");
 
             int rowCount = ps.executeUpdate();
             if (rowCount == 0) {
@@ -114,21 +120,6 @@ public class DatabaseConnectionHandler {
             oneClause = 1;
         }
 
-        /*String timeQ = "";
-        if (!timePeriod.equals("all")){
-            String days = "1";
-            if (timePeriod.equals("3 days")) {
-                days = "3";
-            } else if (timePeriod.equals("1 week")){
-                days = "7";
-            } else if (timePeriod.equals("1 month")) {
-                days = "31";
-            } else {
-                days = "1";
-            }
-            timeQ = " WHERE start_time < " + days;
-        }*/
-
         String sizeQ = "";
         if (class_size.equals("30+")){
             sizeQ = " capacity > " + 30;
@@ -143,7 +134,7 @@ public class DatabaseConnectionHandler {
 
         try {
             String query = "SELECT * FROM ClassSession " + where + categoryQ + delim1+  durationQ + delim2 + sizeQ;
-            System.out.println(query);
+            System.out.println("Executing query: " + query + "\n");
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
@@ -178,6 +169,7 @@ public class DatabaseConnectionHandler {
 
         try {
             String query = "SELECT address, start_time, category, duration, capacity FROM CLASSSESSION";
+            System.out.println("Executing query: " + query + "\n");
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
@@ -210,6 +202,7 @@ public class DatabaseConnectionHandler {
 
         try {
             String query = "SELECT * FROM CLASSSESSION";
+            System.out.println("Executing query: " + query + "\n");
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
@@ -243,6 +236,7 @@ public class DatabaseConnectionHandler {
         try {
             String query = "SELECT * FROM SIGNSUP S, CLASSSESSION C WHERE " +
                     "C.CLASS_CODE = S.CLASS_CODE and S.CID = " + cid;
+            System.out.println("Executing query: " + query + "\n");
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
@@ -292,27 +286,28 @@ public class DatabaseConnectionHandler {
         } catch(SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
-        return result.toArray(new TotalExerciseTime[result.size()]);
+        return result.toArray(new AggregSignsUp[result.size()]);
     }
 
     /**
      * Finds number of classes for each gym location
      */
     public ClassesPerLocation[] findNumClassesAllLocations() {
-        System.out.println("executing nested aggregation");
         ArrayList<ClassesPerLocation> result = new ArrayList<ClassesPerLocation>();
 
         try {
-            String query = "SELECT L.ADDRESS, COUNT(DISTINCT CLASS_CODE) as num_classes " +
-                    "FROM LOCATION L, CLASSSESSION C " +
-                    "WHERE L.ADDRESS = C.ADDRESS GROUP BY L.ADDRESS";
+            String query = "SELECT G.NAME, L.ADDRESS, COUNT(DISTINCT CLASS_CODE) as num_classes " +
+                    "FROM LOCATION L, CLASSSESSION C, GYMFRANCHISE G " +
+                    "WHERE L.ADDRESS = C.ADDRESS AND G.GID = L.G# GROUP BY G.NAME,L.ADDRESS";
+            System.out.println("Executing query: " + query + "\n");
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
             while(rs.next()) {
                 ClassesPerLocation classesPerLocation = new ClassesPerLocation(
+                        rs.getString("name"),
                         rs.getString("address"),
-                        rs.getInt("numClasses")
+                        rs.getInt("num_classes")
                 );
                 result.add(classesPerLocation);
             }
@@ -334,6 +329,9 @@ public class DatabaseConnectionHandler {
 
         try {
             String query = "SELECT L.ADDRESS FROM LOCATION L WHERE NOT EXISTS(" +
+                    "SELECT C1.CATEGORY FROM CLASSSESSION C1 MINUS (" +
+                    "SELECT C2.CATEGORY FROM CLASSSESSION C2 WHERE L.ADDRESS = C2.ADDRESS))";
+            System.out.println("Executing query: " + query + "\n");
                     "SELECT DISTINCT C1.CATEGORY FROM CLASSSESSION C1 MINUS (" +
                     "SELECT DISTINCT C2.CATEGORY FROM CLASSSESSION C2 WHERE L.ADDRESS = C2.ADDRESS))";
             Statement stmt = connection.createStatement();

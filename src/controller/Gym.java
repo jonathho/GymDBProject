@@ -43,9 +43,16 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
 
 //            //TODO: stop here and use gui when ready
             new GUI(dbHandler);
+
+            // -------------------------------------------------------------------------------
+            // testing functions below
             this.printResults();
             this.printProjections();
             this.printAggregates(20);
+            this.printNestedAggregation();
+            this.printDivision();
+            // --------------------------------------------------------------------------------
+
 //            TerminalTransactions transactions = new TerminalTransactions();
 //            transactions.setupDatabase(this);
 //            transactions.showMainMenu(this);
@@ -124,6 +131,7 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
             System.out.printf("%-15.15s", classSession.getCapacity());
             System.out.println();
         }
+        System.out.println();
     }
 
     public void printProjections() {
@@ -156,6 +164,7 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
             System.out.printf("%-15.15s", cs.getCapacity());
             System.out.println();
         }
+        System.out.println();
     }
 
     public void printAggregates(int cid) {
@@ -172,7 +181,41 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
             System.out.printf("%-15.15s", a.getNumClasses());
             System.out.println();
         }
+        System.out.println();
     }
+
+    public void printNestedAggregation() {
+        ClassesPerLocation[] res = dbHandler.findNumClassesAllLocations();
+
+        System.out.printf("%-40.40s", "location");
+        System.out.printf("%-15.15s", "num_classes");
+        System.out.println();
+
+        for (int i = 0; i < res.length; i++) {
+            ClassesPerLocation cpls = res[i];
+
+            System.out.printf("%-40.40s", cpls.getAddress());
+            System.out.printf("%-15.15s", cpls.getNumClasses());
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public void printDivision() {
+        LocationAddress[] res = dbHandler.findLocationsWithAllClassCategories();
+
+        System.out.printf("%-40.40s", "location");
+        System.out.println();
+
+        for (int i = 0; i < res.length; i++) {
+            LocationAddress las = res[i];
+
+            System.out.printf("%-40.40s", las.getAddress());
+            System.out.println();
+        }
+        System.out.println();
+    }
+
     /**
      * Displays information about various class sessions on the UI
      */

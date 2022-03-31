@@ -2,7 +2,7 @@ package ui;
 
 
 import database.DatabaseConnectionHandler;
-import model.ClassSession;
+import model.*;
 
 
 import javax.swing.*;
@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.util.HashMap;
 
 public class GUI extends JFrame implements ActionListener {
     public static final int WIDTH = 400;
@@ -20,6 +21,9 @@ public class GUI extends JFrame implements ActionListener {
     private String[] classSizes = {"all", "1", "10", "30", "30+"};
     private String[] periods = {"all", "1 day", "3 days", "1 week", "1 month"};
     private String[] monthStrings = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+    HashMap hm = new HashMap();
+
+
 
     private JComboBox<String> durBox;
     private JComboBox<String> catBox;
@@ -47,6 +51,7 @@ public class GUI extends JFrame implements ActionListener {
         this.dbHandler = dbHandler;
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         // initialization of panels
+        monthMap();
         initInteractive();
         initList();
         initButtons();
@@ -56,6 +61,21 @@ public class GUI extends JFrame implements ActionListener {
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
+    }
+
+    private void monthMap() {
+        hm.put("January", 1);
+        hm.put("February", 2);
+        hm.put("March", 3);
+        hm.put("April", 4);
+        hm.put("May", 5);
+        hm.put("June", 6);
+        hm.put("July", 7);
+        hm.put("August", 8);
+        hm.put("September", 9);
+        hm.put("October", 10);
+        hm.put("November", 11);
+        hm.put("December", 12);
     }
 
     private void initList() {
@@ -181,32 +201,129 @@ public class GUI extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("filter")) {
-            //String timeFilter = (String) timeBox.getSelectedItem();
             String durFilter = (String) durBox.getSelectedItem();
             String catFilter = (String) catBox.getSelectedItem();
             String sizeFilter = (String) sizeBox.getSelectedItem();
-            dbHandler.selectClassSession(durFilter, catFilter, sizeFilter);
+            ClassSession[] classes = dbHandler.selectClassSession(durFilter, catFilter, sizeFilter);
+            displayClasses(classes);
+
         } else if (e.getActionCommand().equals("taken")) {
             if (customerIDfield.getText().equals("") || customerIDfield.getText().equals("Customer ID to search")) {
-                System.out.println("TAKEN PRESSED");
+                msg = new JFrame();
+                JOptionPane.showMessageDialog(msg, "ID not found");
             } else {
                 ClassSession[] classes = dbHandler.getJoinInfo(Integer.parseInt(customerIDfield.getText()));
                 displayClasses(classes);
             }
         } else if (e.getActionCommand().equals("cusFreq")) {
-            System.out.println("CUSTOMER FREQUENCY PRESSED");
+            AggregSignsUp[] classes = dbHandler.aggregSignsUps(Integer.parseInt(customerIDfield.getText()));
+            displayAggregation(classes);
         } else if (e.getActionCommand().equals("locFreq")) {
-            System.out.println("LOCATION FREQUENCY PRESSED");
+            ClassesPerLocation[] classesLocations = dbHandler.findNumClassesAllLocations();
+            displayClassLocations(classesLocations);
         } else if (e.getActionCommand().equals("locCov")) {
-            System.out.println("LOCATION COVERAGE PRESSED");
+            LocationAddress[] locationAddresses = dbHandler.findLocationsWithAllClassCategories();
+            findLocationCoverage(locationAddresses);
         } else if (e.getActionCommand().equals("classes")) {
-            System.out.println("ALL CLASSES PRESSED");
+            ProjectionClass[] classes = dbHandler.projectAllClassSessions();
+            displayProjection(classes);
         }  else if (e.getActionCommand().equals("date")) {
             dateFrame();
         }   else if (e.getActionCommand().equals("modify")) {
             System.out.println("MODIFY PRESSED");
         } else if (e.getActionCommand().equals("delete")) {
             System.out.println("delete PRESSED");
+        }
+    }
+
+    private void findLocationCoverage(LocationAddress[] classes) {
+        if (classes.length == 0){
+            msg = new JFrame();
+            JOptionPane.showMessageDialog(msg, "No locations cover all class categories");
+        } else {
+            String[] columnNames = {"Addresses of gyms providing all class categories"};
+
+            JFrame classesFrame = new JFrame("Found Locations");
+            Object[][] data = new Object[classes.length][columnNames.length];
+            for (int i = 0; i < classes.length; i++) {
+                data[i][0] = classes[i].getAddress();
+            }
+            joinedClassPanel = new JTable(data, columnNames);
+            JScrollPane scrollPane = new JScrollPane(joinedClassPanel);
+            classesFrame.add(scrollPane);
+            classesFrame.setSize(300, 400);
+            classesFrame.setVisible(true);
+        }
+    }
+
+    private void displayClassLocations(ClassesPerLocation[] classes) {
+        if (classes.length == 0){
+            msg = new JFrame();
+            JOptionPane.showMessageDialog(msg, "No classes");
+        } else {
+            String[] columnNames = {"Gym", "Address", "Number of Classes"};
+
+            JFrame classesFrame = new JFrame("Found Classes");
+            Object[][] data = new Object[classes.length][columnNames.length];
+            for (int i = 0; i < classes.length; i++) {
+                data[i][0] = classes[i].getName();
+                data[i][1] = classes[i].getAddress();
+                data[i][2] = classes[i].getNumClasses();
+            }
+            joinedClassPanel = new JTable(data, columnNames);
+            JScrollPane scrollPane = new JScrollPane(joinedClassPanel);
+            classesFrame.add(scrollPane);
+            classesFrame.setSize(500, 400);
+            classesFrame.setVisible(true);
+        }
+    }
+
+    private void displayAggregation(AggregSignsUp[] classes) {
+        System.out.println(classes[0].getNumClasses());
+        /*if (classes.length == 0){
+            msg = new JFrame();
+            JOptionPane.showMessageDialog(msg, "No classes");
+        } else {
+            String[] columnNames = {"Address", "Start Time", "Category", "Duration", "Size"};
+
+            JFrame classesFrame = new JFrame("Found Classes");
+            Object[][] data = new Object[classes.length][columnNames.length];
+            for (int i = 0; i < classes.length; i++) {
+                data[i][0] = classes[i].getAddress();
+                data[i][1] = classes[i].getStart_time();
+                data[i][2] = classes[i].getCategory();
+                data[i][3] = classes[i].getDuration();
+                data[i][4] = classes[i].getCapacity();
+            }
+            joinedClassPanel = new JTable(data, columnNames);
+            JScrollPane scrollPane = new JScrollPane(joinedClassPanel);
+            classesFrame.add(scrollPane);
+            classesFrame.setSize(900, 400);
+            classesFrame.setVisible(true);
+        }*/
+    }
+
+    private void displayProjection(ProjectionClass[] projectionClasses) {
+        if (projectionClasses.length == 0){
+            msg = new JFrame();
+            JOptionPane.showMessageDialog(msg, "No classes");
+        } else {
+            String[] columnNames = {"Address", "Start Time", "Category", "Duration", "Size"};
+
+            JFrame classesFrame = new JFrame("Found Classes");
+            Object[][] data = new Object[projectionClasses.length][columnNames.length];
+            for (int i = 0; i < projectionClasses.length; i++) {
+                data[i][0] = projectionClasses[i].getAddress();
+                data[i][1] = projectionClasses[i].getStart_time();
+                data[i][2] = projectionClasses[i].getCategory();
+                data[i][3] = projectionClasses[i].getDuration();
+                data[i][4] = projectionClasses[i].getCapacity();
+            }
+            joinedClassPanel = new JTable(data, columnNames);
+            JScrollPane scrollPane = new JScrollPane(joinedClassPanel);
+            classesFrame.add(scrollPane);
+            classesFrame.setSize(900, 400);
+            classesFrame.setVisible(true);
         }
     }
 
@@ -271,7 +388,10 @@ public class GUI extends JFrame implements ActionListener {
         dateFrame.add(hour);
 
         String[] minutes = new String[60];
-        for (int i = 0; i < 60; i++){
+        for (int i = 0; i < 10; i++){
+            minutes[i] = "0" + String.valueOf(i);
+        }
+        for (int i = 10; i < 60; i++){
             minutes[i] = String.valueOf(i);
         }
         JComboBox<String> minute = new JComboBox<String>(minutes);
@@ -282,13 +402,11 @@ public class GUI extends JFrame implements ActionListener {
             // set current date in boxes to the output of the other text field
             String selDay = (String) day.getSelectedItem();
             String selMonth = (String) months.getSelectedItem();
-            if (selMonth.length() > 4) {
-                selMonth = selMonth.substring(0,3);
-            }
+            int monthNum = (int) hm.get(selMonth);
             String selYear = (String) year.getSelectedItem();
             String selHour = (String) hour.getSelectedItem();
             String selMinute = (String) minute.getSelectedItem();
-            selectedDate.setText(String.format("%s %s, %s, %s:%s", selMonth, selDay, selYear, selHour, selMinute));
+            selectedDate.setText(String.format("%s-%s-%s %s:%s:00", selYear, monthNum, selDay, selHour, selMinute));
             dateFrame.dispose();
         });
         dateFrame.add(finish);

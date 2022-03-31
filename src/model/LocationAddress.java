@@ -6,4 +6,8 @@ public class LocationAddress {
     public LocationAddress(String address) {
         this.address = address;
     }
+
+    public String getAddress() {
+        return address;
+    }
 }
