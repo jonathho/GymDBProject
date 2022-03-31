@@ -350,7 +350,25 @@ public class DatabaseConnectionHandler {
 
         return result.toArray(new LocationAddress[result.size()]);
     }
+    public boolean classCodeExists(ClassSession model) {
+        try {
+            String query = ("SELECT * FROM CLASSSESSION WHERE CLASS_CODE = " + model.getClass_code());
+            System.out.println("Executing query: " + query + "\n");
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
 
+            //TODO: might not need to close resultsets, autoclose
+            boolean notEmpty = rs.next();
+
+            rs.close();
+            stmt.close();
+            return notEmpty;
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+        return false;
+    }
 
     public boolean login(String username, String password) {
         try {
