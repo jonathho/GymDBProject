@@ -119,21 +119,6 @@ public class DatabaseConnectionHandler {
             oneClause = 1;
         }
 
-        /*String timeQ = "";
-        if (!timePeriod.equals("all")){
-            String days = "1";
-            if (timePeriod.equals("3 days")) {
-                days = "3";
-            } else if (timePeriod.equals("1 week")){
-                days = "7";
-            } else if (timePeriod.equals("1 month")) {
-                days = "31";
-            } else {
-                days = "1";
-            }
-            timeQ = " WHERE start_time < " + days;
-        }*/
-
         String sizeQ = "";
         if (class_size.equals("30+")){
             sizeQ = " capacity > " + 30;
@@ -305,15 +290,16 @@ public class DatabaseConnectionHandler {
         ArrayList<ClassesPerLocation> result = new ArrayList<ClassesPerLocation>();
 
         try {
-            String query = "SELECT L.ADDRESS, COUNT(DISTINCT CLASS_CODE) as num_classes " +
-                    "FROM LOCATION L, CLASSSESSION C " +
-                    "WHERE L.ADDRESS = C.ADDRESS GROUP BY L.ADDRESS";
+            String query = "SELECT G.NAME, L.ADDRESS, COUNT(DISTINCT CLASS_CODE) as num_classes " +
+                    "FROM LOCATION L, CLASSSESSION C, GYMFRANCHISE G " +
+                    "WHERE L.ADDRESS = C.ADDRESS AND G.GID = L.G# GROUP BY G.NAME,L.ADDRESS";
             System.out.println("Executing query: " + query + "\n");
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
             while(rs.next()) {
                 ClassesPerLocation classesPerLocation = new ClassesPerLocation(
+                        rs.getString("name"),
                         rs.getString("address"),
                         rs.getInt("num_classes")
                 );
