@@ -1,6 +1,7 @@
 package ui;
 
 
+import com.sun.scenario.effect.impl.sw.java.JSWBlend_SRC_OUTPeer;
 import database.DatabaseConnectionHandler;
 import model.*;
 
@@ -11,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class GUI extends JFrame implements ActionListener {
@@ -44,6 +47,9 @@ public class GUI extends JFrame implements ActionListener {
     private JFrame msg;
 
     private DatabaseConnectionHandler dbHandler;
+    private JComboBox<String> updateCatBox;
+    private JTextField classAddress;
+    private JTextField empSIN;
 
 
     public GUI(DatabaseConnectionHandler dbHandler) {
@@ -167,7 +173,14 @@ public class GUI extends JFrame implements ActionListener {
         basicPanel.add(new JLabel("Class Code: "));
         basicPanel.add(classCode);
 
+        classAddress = new JTextField(12);
+        basicPanel.add(new JLabel("Address: "));
+        basicPanel.add(classAddress);
 
+        empSIN = new JTextField(12);
+        basicPanel.add(new JLabel("Employee SIN: "));
+        basicPanel.add(empSIN);
+        
         JButton setDate = new JButton("SET DATE");
         setDate.setActionCommand("date");
         setDate.addActionListener(this);
@@ -184,9 +197,12 @@ public class GUI extends JFrame implements ActionListener {
         classDuration = new JTextField(12);
         basicPanel.add(new JLabel("Class Duration: "));
         basicPanel.add(classDuration);
-
+        updateCatBox = new JComboBox<>(Arrays.copyOfRange(classCategories, 1, classCategories.length));
+        basicPanel.add(new JLabel("Category"));
+        basicPanel.add(updateCatBox);
         JButton modify = new JButton("MODIFY");
         JButton delete = new JButton("DELETE");
+
         basicPanel.add(modify);
         basicPanel.add(delete);
         modify.setActionCommand("modify");
@@ -230,10 +246,32 @@ public class GUI extends JFrame implements ActionListener {
         }  else if (e.getActionCommand().equals("date")) {
             dateFrame();
         }   else if (e.getActionCommand().equals("modify")) {
-            System.out.println("MODIFY PRESSED");
+            ClassSession classSession = buildClassSession();
+            if (dbHandler.classCodeExists(classSession)) {
+                dbHandler.updateClassSession(classSession.getClass_code(), classSession.getStart_time());
+                msg = new JFrame();
+                JOptionPane.showMessageDialog(msg, "Class updated");
+            } else {
+                dbHandler.insertClassSession(classSession);
+                msg = new JFrame();
+                JOptionPane.showMessageDialog(msg, "Class inserted");
+            }
         } else if (e.getActionCommand().equals("delete")) {
             System.out.println("delete PRESSED");
         }
+    }
+
+    private ClassSession buildClassSession() {
+        int class_code = Integer.parseInt(classCode.getText());
+        String address = classAddress.getText();
+        System.out.println("EMP SIN " + empSIN.getText());
+        int SIN = (empSIN.getText().equals("") ? 0 : Integer.parseInt(empSIN.getText()));
+        Timestamp time = (selectedDate.getText().equals("Set Class Start Time") ? new Timestamp(System.currentTimeMillis()): Timestamp.valueOf(selectedDate.getText()));
+        String category = (String) updateCatBox.getSelectedItem();
+        int duration = (classDuration.getText().equals("") ? 0 : Integer.parseInt(classDuration.getText()));
+        int capacity = (classSize.getText().equals("") ? 0 : Integer.parseInt(classSize.getText()));
+        ClassSession model = new ClassSession(class_code, address, SIN, time, category, duration, capacity);
+        return model;
     }
 
     private void findLocationCoverage(LocationAddress[] classes) {
