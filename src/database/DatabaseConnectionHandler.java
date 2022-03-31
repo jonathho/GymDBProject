@@ -290,15 +290,16 @@ public class DatabaseConnectionHandler {
         ArrayList<ClassesPerLocation> result = new ArrayList<ClassesPerLocation>();
 
         try {
-            String query = "SELECT L.ADDRESS, COUNT(DISTINCT CLASS_CODE) as num_classes " +
-                    "FROM LOCATION L, CLASSSESSION C " +
-                    "WHERE L.ADDRESS = C.ADDRESS GROUP BY L.ADDRESS";
+            String query = "SELECT G.NAME, L.ADDRESS, COUNT(DISTINCT CLASS_CODE) as num_classes " +
+                    "FROM LOCATION L, CLASSSESSION C, GYMFRANCHISE G " +
+                    "WHERE L.ADDRESS = C.ADDRESS AND G.GID = L.G# GROUP BY G.NAME,L.ADDRESS";
             System.out.println("Executing query: " + query + "\n");
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
             while(rs.next()) {
                 ClassesPerLocation classesPerLocation = new ClassesPerLocation(
+                        rs.getString("name"),
                         rs.getString("address"),
                         rs.getInt("num_classes")
                 );

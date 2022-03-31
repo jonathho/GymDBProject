@@ -261,13 +261,14 @@ public class GUI extends JFrame implements ActionListener {
             msg = new JFrame();
             JOptionPane.showMessageDialog(msg, "No classes");
         } else {
-            String[] columnNames = {"Address", "Number of Classes"};
+            String[] columnNames = {"Gym", "Address", "Number of Classes"};
 
             JFrame classesFrame = new JFrame("Found Classes");
             Object[][] data = new Object[classes.length][columnNames.length];
             for (int i = 0; i < classes.length; i++) {
-                data[i][0] = classes[i].getAddress();
-                data[i][1] = classes[i].getNumClasses();
+                data[i][0] = classes[i].getName();
+                data[i][1] = classes[i].getAddress();
+                data[i][2] = classes[i].getNumClasses();
             }
             joinedClassPanel = new JTable(data, columnNames);
             JScrollPane scrollPane = new JScrollPane(joinedClassPanel);
