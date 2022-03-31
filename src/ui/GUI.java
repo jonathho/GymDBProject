@@ -257,7 +257,15 @@ public class GUI extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(msg, "Class inserted");
             }
         } else if (e.getActionCommand().equals("delete")) {
-            System.out.println("delete PRESSED");
+            ClassSession classSession = buildClassSession();
+            if (dbHandler.classCodeExists(classSession)) {
+                dbHandler.deleteClassSession(classSession.getClass_code());
+                msg = new JFrame();
+                JOptionPane.showMessageDialog(msg, "Class Deleted");
+            } else {
+                msg = new JFrame();
+                JOptionPane.showMessageDialog(msg, "Class does not exist");
+            }
         }
     }
 
