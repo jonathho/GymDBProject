@@ -334,8 +334,8 @@ public class DatabaseConnectionHandler {
 
         try {
             String query = "SELECT L.ADDRESS FROM LOCATION L WHERE NOT EXISTS(" +
-                    "SELECT C1.CATEGORY FROM CLASSSESSION C1 MINUS (" +
-                    "SELECT C2.CATEGORY FROM CLASSSESSION C2 WHERE L.ADDRESS = C2.ADDRESS))";
+                    "SELECT DISTINCT C1.CATEGORY FROM CLASSSESSION C1 MINUS (" +
+                    "SELECT DISTINCT C2.CATEGORY FROM CLASSSESSION C2 WHERE L.ADDRESS = C2.ADDRESS))";
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
 
