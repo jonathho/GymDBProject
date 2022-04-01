@@ -2,6 +2,7 @@ package database;
 
 import model.*;
 
+import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -45,7 +46,7 @@ public class DatabaseConnectionHandler {
             ps.setInt(6, model.getDuration());
             ps.setInt(7, model.getCapacity());
 
-            System.out.println("Executing query: " + ps + "\n");
+            System.out.println("Executing insert: \n");
 
             ps.executeUpdate();
             connection.commit();
@@ -62,7 +63,7 @@ public class DatabaseConnectionHandler {
             PreparedStatement ps = connection.prepareStatement("DELETE FROM CLASSSESSION WHERE class_code = ?");
             ps.setInt(1, class_code);
 
-            System.out.println("Executing query: " + ps + "\n");
+            System.out.println("Executing query: " + ps.toString() + "\n");
 
             int rowCount = ps.executeUpdate();
             if (rowCount == 0) {
@@ -84,7 +85,7 @@ public class DatabaseConnectionHandler {
             ps.setTimestamp(1, start_time);
             ps.setInt(2, class_code);
 
-            System.out.println("Executing query: " + ps + "\n");
+            System.out.println("Executing query: " + class_code + "\n" + start_time + "\n");
 
             int rowCount = ps.executeUpdate();
             if (rowCount == 0) {
@@ -102,7 +103,6 @@ public class DatabaseConnectionHandler {
 
     public ClassSession[] selectClassSession(String duration, String cat, String class_size) {
         //TODO: select classes with specific categories and times
-        System.out.println("Executing Select");
         ArrayList<ClassSession> result = new ArrayList<ClassSession>();
 
         int oneClause = 0;
@@ -164,7 +164,6 @@ public class DatabaseConnectionHandler {
     }
 
     public ProjectionClass[] projectAllClassSessions() {
-        System.out.println("executing projection");
         ArrayList<ProjectionClass> result = new ArrayList<ProjectionClass>();
 
         try {
@@ -399,6 +398,40 @@ public class DatabaseConnectionHandler {
         dropAllGymTablesIfExists();
 
         //TODO: might not need this, just run sql script to populate
+        String s;
+        StringBuffer sb = new StringBuffer();
+
+        try
+        {
+            //FileReader fr = new FileReader("/sql/scripts.sql");
+            InputStream stream = this.getClass().getResourceAsStream("/sql/scripts.sql");
+            BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+
+           // BufferedReader br = new BufferedReader(fr);
+
+            while((s = br.readLine()) != null)
+            {
+                sb.append(s);
+            }
+            br.close();
+
+            String[] inst = sb.toString().split(";");
+
+            Statement st = connection.createStatement();
+
+            for(int i = 0; i<inst.length; i++)
+            {
+                if(!inst[i].trim().equals(""))
+                {
+                    st.executeUpdate(inst[i]);
+                    System.out.println(">>"+inst[i]);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+       }
 
     }
 
@@ -409,14 +442,16 @@ public class DatabaseConnectionHandler {
 
             //TODO: loop through to drop all tables
             while(rs.next()) {
-                if(rs.getString(1).toLowerCase().equals("classsession")) {
-                    stmt.execute("DROP TABLE CLASSSESSION");
-                    break;
-                }
+                System.out.println("dropping " + rs.getString(1));
+                connection.createStatement().execute("DROP TABLE " + rs.getString(1) + " CASCADE CONSTRAINTS");
+//                if(rs.getString(1).toLowerCase().equals("classsession")) {
+//                    stmt.execute("DROP TABLE CLASSSESSION CASCADE CONSTRAINTS");
+//                    break;
+//                    }
             }
 
-            rs.close();
-            stmt.close();
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
         } catch (SQLException e) {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }

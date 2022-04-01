@@ -37,20 +37,20 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
 
         if (didConnect) {
             loginWindow.dispose();
-
+            databaseSetup();
 
 
 
 //            //TODO: stop here and use gui when ready
-            new GUI(dbHandler);
+            //new GUI(dbHandler);
 
             // -------------------------------------------------------------------------------
             // testing functions below
-            this.printResults();
-            this.printProjections();
-            this.printAggregates(20);
-            this.printNestedAggregation();
-            this.printDivision();
+//            this.printResults();
+//            this.printProjections();
+//            this.printAggregates(20);
+//            this.printNestedAggregation();
+//            this.printDivision();
             // --------------------------------------------------------------------------------
 
 //            TerminalTransactions transactions = new TerminalTransactions();
@@ -92,12 +92,12 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
      * Displays information about various class sessions on the terminal
      */
     public void printResults() {
-        //TODO
-//        insertClassSession(new ClassSession(420, "2891 Laurel St", 862245315,
-//                new Timestamp(System.currentTimeMillis()), "Yoga", 45, 10));
+        // insertClassSession(new ClassSession(3, "2891 Laurel St", 862245315,
+        //        new Timestamp(System.currentTimeMillis()), "Yoga", 45, 10));
         // deleteClassSession(420);
-        // updateClassSession(441, new Timestamp(System.currentTimeMillis()));
-        ClassSession[] classSessions = dbHandler.selectClassSession("60", "Cycling", "25");
+        //Timestamp ts = Timestamp.valueOf("2022-03-06 19:00:00.0");
+        //updateClassSession(420, ts);
+        ClassSession[] classSessions = dbHandler.getGymInfo(); //.selectClassSession("60", "Cycling", "25");
 
 
         System.out.printf("%-15.15s", "class code");
