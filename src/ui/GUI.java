@@ -126,7 +126,7 @@ public class GUI extends JFrame implements ActionListener {
             }
         });
         JButton classesTaken = new JButton("CLASSES TAKEN");
-        JButton cusFreq = new JButton("CUSTOMER FREQUENCY");
+        JButton cusFreq = new JButton("CUSTOMER TOTAL HOURS");
         JButton locFreq = new JButton("LOCATION FREQUENCY");
         JButton locCov = new JButton("LOCATION COVERAGE");
 
@@ -156,10 +156,11 @@ public class GUI extends JFrame implements ActionListener {
         buttonPanel.add(filter);
         buttonPanel.add(customerIDfield);
         buttonPanel.add(classesTaken);
+        buttonPanel.add(cusFreq);
         buttonPanel.add(new JLabel("SUMMARY INFORMATION:"));
         buttonPanel.add(allClasses);
 
-        buttonPanel.add(cusFreq);
+
         buttonPanel.add(locFreq);
         buttonPanel.add(locCov);
 
@@ -232,20 +233,22 @@ public class GUI extends JFrame implements ActionListener {
                 if (classes == null) {
                     msg = new JFrame();
                     JOptionPane.showMessageDialog(msg, "ID not found");
+                } else {
+                    displayClasses(classes);
                 }
-                displayClasses(classes);
             }
         } else if (e.getActionCommand().equals("cusFreq")) {
             if (customerIDfield.getText().equals("") || customerIDfield.getText().equals("Customer ID to search")) {
                 msg = new JFrame();
                 JOptionPane.showMessageDialog(msg, "ID not found");
             } else {
-                TotalExerciseTime[] classes = dbHandler.aggregSignsUps(Integer.parseInt(customerIDfield.getText()));
-                if (classes == null) {
+                if (!dbHandler.cidExists(customerIDfield.getText())) {
                     msg = new JFrame();
                     JOptionPane.showMessageDialog(msg, "ID not found");
+                } else {
+                    TotalExerciseTime[] classes = dbHandler.aggregSignsUps(Integer.parseInt(customerIDfield.getText()));
+                    displayAggregation(classes);
                 }
-                displayAggregation(classes);
             }
         } else if (e.getActionCommand().equals("locFreq")) {
             ClassesPerLocation[] classesLocations = dbHandler.findNumClassesAllLocations();
@@ -338,12 +341,11 @@ public class GUI extends JFrame implements ActionListener {
     }
 
     private void displayAggregation(TotalExerciseTime[] classes) {
-        System.out.println(classes[0].getCid());
         if (classes.length == 0){
             msg = new JFrame();
             JOptionPane.showMessageDialog(msg, "No classes");
         } else {
-            String[] columnNames = {"Cid", "Total Duration"};
+            String[] columnNames = {"Cid", "Total Hours of Classes"};
 
             JFrame classesFrame = new JFrame("Found Classes");
             Object[][] data = new Object[classes.length][columnNames.length];
@@ -354,7 +356,7 @@ public class GUI extends JFrame implements ActionListener {
             joinedClassPanel = new JTable(data, columnNames);
             JScrollPane scrollPane = new JScrollPane(joinedClassPanel);
             classesFrame.add(scrollPane);
-            classesFrame.setSize(900, 400);
+            classesFrame.setSize(300, 400);
             classesFrame.setVisible(true);
         }
     }

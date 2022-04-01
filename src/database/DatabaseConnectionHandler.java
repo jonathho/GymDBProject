@@ -448,4 +448,23 @@ public class DatabaseConnectionHandler {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
     }
+
+    public boolean cidExists(String cid) {
+        try {
+            String query = ("SELECT * FROM SIGNSUP WHERE CID = " + cid);
+            System.out.println("Executing query: " + query + "\n");
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+
+            boolean notEmpty = rs.next();
+            System.out.println(notEmpty);
+            rs.close();
+            stmt.close();
+            return notEmpty;
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+        return false;
+    }
 }
