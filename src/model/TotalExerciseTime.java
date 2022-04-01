@@ -13,7 +13,7 @@ public class TotalExerciseTime {
         return cid;
     }
 
-    public int getNumClasses() {
+    public int getTotalExerciseTime() {
         return totalExerciseTime;
     }
 }

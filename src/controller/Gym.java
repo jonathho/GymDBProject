@@ -42,7 +42,7 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
 
 
 //            //TODO: stop here and use gui when ready
-            //new GUI(dbHandler);
+            new GUI(dbHandler);
 
             // -------------------------------------------------------------------------------
             // testing functions below
@@ -178,7 +178,7 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
             TotalExerciseTime a = as[i];
 
             System.out.printf("%-15.15s", a.getCid());
-            System.out.printf("%-15.15s", a.getNumClasses());
+            System.out.printf("%-15.15s", a.getTotalExerciseTime());
             System.out.println();
         }
         System.out.println();

@@ -229,11 +229,24 @@ public class GUI extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(msg, "ID not found");
             } else {
                 ClassSession[] classes = dbHandler.getJoinInfo(Integer.parseInt(customerIDfield.getText()));
+                if (classes == null) {
+                    msg = new JFrame();
+                    JOptionPane.showMessageDialog(msg, "ID not found");
+                }
                 displayClasses(classes);
             }
         } else if (e.getActionCommand().equals("cusFreq")) {
-            TotalExerciseTime[] classes = dbHandler.aggregSignsUps(Integer.parseInt(customerIDfield.getText()));
-            displayAggregation(classes);
+            if (customerIDfield.getText().equals("") || customerIDfield.getText().equals("Customer ID to search")) {
+                msg = new JFrame();
+                JOptionPane.showMessageDialog(msg, "ID not found");
+            } else {
+                TotalExerciseTime[] classes = dbHandler.aggregSignsUps(Integer.parseInt(customerIDfield.getText()));
+                if (classes == null) {
+                    msg = new JFrame();
+                    JOptionPane.showMessageDialog(msg, "ID not found");
+                }
+                displayAggregation(classes);
+            }
         } else if (e.getActionCommand().equals("locFreq")) {
             ClassesPerLocation[] classesLocations = dbHandler.findNumClassesAllLocations();
             displayClassLocations(classesLocations);
@@ -326,27 +339,24 @@ public class GUI extends JFrame implements ActionListener {
 
     private void displayAggregation(TotalExerciseTime[] classes) {
         System.out.println(classes[0].getCid());
-        /*if (classes.length == 0){
+        if (classes.length == 0){
             msg = new JFrame();
             JOptionPane.showMessageDialog(msg, "No classes");
         } else {
-            String[] columnNames = {"Address", "Start Time", "Category", "Duration", "Size"};
+            String[] columnNames = {"Cid", "Total Duration"};
 
             JFrame classesFrame = new JFrame("Found Classes");
             Object[][] data = new Object[classes.length][columnNames.length];
             for (int i = 0; i < classes.length; i++) {
-                data[i][0] = classes[i].getAddress();
-                data[i][1] = classes[i].getStart_time();
-                data[i][2] = classes[i].getCategory();
-                data[i][3] = classes[i].getDuration();
-                data[i][4] = classes[i].getCapacity();
+                data[i][0] = classes[i].getCid();
+                data[i][1] = classes[i].getTotalExerciseTime();
             }
             joinedClassPanel = new JTable(data, columnNames);
             JScrollPane scrollPane = new JScrollPane(joinedClassPanel);
             classesFrame.add(scrollPane);
             classesFrame.setSize(900, 400);
             classesFrame.setVisible(true);
-        }*/
+        }
     }
 
     private void displayProjection(ProjectionClass[] projectionClasses) {

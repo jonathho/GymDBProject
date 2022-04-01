@@ -397,32 +397,25 @@ public class DatabaseConnectionHandler {
     public void databaseSetup() {
         dropAllGymTablesIfExists();
 
-        //TODO: might not need this, just run sql script to populate
+        // source: https://coderanch.com/t/306966/databases/Execute-sql-file-java
         String s;
         StringBuffer sb = new StringBuffer();
-
-        try
-        {
+        try {
             //FileReader fr = new FileReader("/sql/scripts.sql");
             InputStream stream = this.getClass().getResourceAsStream("/sql/scripts.sql");
             BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-
            // BufferedReader br = new BufferedReader(fr);
 
-            while((s = br.readLine()) != null)
-            {
+            while((s = br.readLine()) != null) {
                 sb.append(s);
             }
             br.close();
 
             String[] inst = sb.toString().split(";");
-
             Statement st = connection.createStatement();
 
-            for(int i = 0; i<inst.length; i++)
-            {
-                if(!inst[i].trim().equals(""))
-                {
+            for(int i = 0; i<inst.length; i++) {
+                if(!inst[i].trim().equals("")) {
                     st.executeUpdate(inst[i]);
                     System.out.println(">>"+inst[i]);
                 }
@@ -432,7 +425,6 @@ public class DatabaseConnectionHandler {
         } catch (IOException e) {
             e.printStackTrace();
        }
-
     }
 
     private void dropAllGymTablesIfExists() {
