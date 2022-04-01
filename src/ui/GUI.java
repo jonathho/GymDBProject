@@ -67,6 +67,7 @@ public class GUI extends JFrame implements ActionListener {
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
+        setLocationRelativeTo(null);
     }
 
     private void monthMap() {
@@ -126,7 +127,7 @@ public class GUI extends JFrame implements ActionListener {
             }
         });
         JButton classesTaken = new JButton("CLASSES TAKEN");
-        JButton cusFreq = new JButton("CUSTOMER TOTAL HOURS");
+        JButton cusFreq = new JButton("CUSTOMER TOTAL MINUTES");
         JButton locFreq = new JButton("LOCATION FREQUENCY");
         JButton locCov = new JButton("LOCATION COVERAGE");
 
@@ -305,7 +306,7 @@ public class GUI extends JFrame implements ActionListener {
         } else {
             String[] columnNames = {"Addresses of gyms providing all class categories"};
 
-            JFrame classesFrame = new JFrame("Found Locations");
+            JFrame classesFrame = new JFrame("Result Locations");
             Object[][] data = new Object[classes.length][columnNames.length];
             for (int i = 0; i < classes.length; i++) {
                 data[i][0] = classes[i].getAddress();
@@ -325,7 +326,7 @@ public class GUI extends JFrame implements ActionListener {
         } else {
             String[] columnNames = {"Gym", "Address", "Number of Classes"};
 
-            JFrame classesFrame = new JFrame("Found Classes");
+            JFrame classesFrame = new JFrame("Result Classes");
             Object[][] data = new Object[classes.length][columnNames.length];
             for (int i = 0; i < classes.length; i++) {
                 data[i][0] = classes[i].getName();
@@ -345,9 +346,9 @@ public class GUI extends JFrame implements ActionListener {
             msg = new JFrame();
             JOptionPane.showMessageDialog(msg, "No classes");
         } else {
-            String[] columnNames = {"Cid", "Total Hours of Classes"};
+            String[] columnNames = {"Cid", "Total Minutes of Classes"};
 
-            JFrame classesFrame = new JFrame("Found Classes");
+            JFrame classesFrame = new JFrame("Result Duration");
             Object[][] data = new Object[classes.length][columnNames.length];
             for (int i = 0; i < classes.length; i++) {
                 data[i][0] = classes[i].getCid();
@@ -368,7 +369,7 @@ public class GUI extends JFrame implements ActionListener {
         } else {
             String[] columnNames = {"Address", "Start Time", "Category", "Duration", "Size"};
 
-            JFrame classesFrame = new JFrame("Found Classes");
+            JFrame classesFrame = new JFrame("Result Classes");
             Object[][] data = new Object[projectionClasses.length][columnNames.length];
             for (int i = 0; i < projectionClasses.length; i++) {
                 data[i][0] = projectionClasses[i].getAddress();
@@ -394,7 +395,7 @@ public class GUI extends JFrame implements ActionListener {
         } else {
             String[] columnNames = {"Class Code","Address", "SIN", "Start Time", "Category", "Duration", "Size"};
 
-            JFrame classesFrame = new JFrame("Found Classes");
+            JFrame classesFrame = new JFrame("Result Classes");
             Object[][] data = new Object[classSessions.length][columnNames.length];
             for (int i = 0; i < classSessions.length; i++) {
                 data[i][0] = classSessions[i].getClass_code();
