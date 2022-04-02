@@ -25,9 +25,10 @@ public class GUI extends JFrame implements ActionListener {
     private String[] periods = {"all", "1 day", "3 days", "1 week", "1 month"};
     private String[] monthStrings = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
     HashMap hm = new HashMap();
+    private String[] projInputs = {"duration", "capacity"};
 
 
-
+    private JComboBox<String> projBox;
     private JComboBox<String> durBox;
     private JComboBox<String> catBox;
     private JComboBox<String> sizeBox;
@@ -110,7 +111,8 @@ public class GUI extends JFrame implements ActionListener {
 
     private void initButtons() {
         buttonPanel = new JPanel(new GridLayout(0, 1, 1, 5));
-        JButton allClasses = new JButton("SHOW ALL CLASSES");
+        JButton allClasses = new JButton("CLASS PROJECTION");
+        projBox = new JComboBox<>(projInputs);
         durBox = new JComboBox<>(classDurations);
         catBox = new JComboBox<>(classCategories);
         sizeBox = new JComboBox<>(classSizes);
@@ -158,8 +160,11 @@ public class GUI extends JFrame implements ActionListener {
         buttonPanel.add(customerIDfield);
         buttonPanel.add(classesTaken);
         buttonPanel.add(cusFreq);
-        buttonPanel.add(new JLabel("SUMMARY INFORMATION:"));
+        buttonPanel.add(projBox);
         buttonPanel.add(allClasses);
+
+        buttonPanel.add(new JLabel("SUMMARY INFORMATION:"));
+
 
 
         buttonPanel.add(locFreq);
@@ -258,8 +263,9 @@ public class GUI extends JFrame implements ActionListener {
             LocationAddress[] locationAddresses = dbHandler.findLocationsWithAllClassCategories();
             findLocationCoverage(locationAddresses);
         } else if (e.getActionCommand().equals("classes")) {
-            ProjectionClass[] classes = dbHandler.projectAllClassSessions();
-            displayProjection(classes);
+            String input = (String) projBox.getSelectedItem();
+            ProjectionClass[] classes = dbHandler.projectAllClassSessions(input);
+            displayProjection(classes, input);
         }  else if (e.getActionCommand().equals("date")) {
             dateFrame();
         }   else if (e.getActionCommand().equals("modify")) {
@@ -362,12 +368,12 @@ public class GUI extends JFrame implements ActionListener {
         }
     }
 
-    private void displayProjection(ProjectionClass[] projectionClasses) {
+    private void displayProjection(ProjectionClass[] projectionClasses, String input) {
         if (projectionClasses.length == 0){
             msg = new JFrame();
             JOptionPane.showMessageDialog(msg, "No classes");
         } else {
-            String[] columnNames = {"Address", "Start Time", "Category", "Duration", "Size"};
+            String[] columnNames = {"Address", "Start Time", "Category", input};
 
             JFrame classesFrame = new JFrame("Result Classes");
             Object[][] data = new Object[projectionClasses.length][columnNames.length];
@@ -375,8 +381,8 @@ public class GUI extends JFrame implements ActionListener {
                 data[i][0] = projectionClasses[i].getAddress();
                 data[i][1] = projectionClasses[i].getStart_time();
                 data[i][2] = projectionClasses[i].getCategory();
-                data[i][3] = projectionClasses[i].getDuration();
-                data[i][4] = projectionClasses[i].getCapacity();
+                data[i][3] = projectionClasses[i].getInput();
+                //data[i][4] = projectionClasses[i].getCapacity();
             }
             joinedClassPanel = new JTable(data, columnNames);
             JScrollPane scrollPane = new JScrollPane(joinedClassPanel);

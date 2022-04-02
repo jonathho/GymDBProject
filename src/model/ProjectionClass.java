@@ -9,16 +9,17 @@ public class ProjectionClass {
     private final String address;
     private final Timestamp start_time;
     private final String category;
-    private final int duration;
-    private final int capacity;
+    private final int input;
+    // private final int capacity;
 
     public ProjectionClass(String address, Timestamp start_time, String category,
-                           int duration, int capacity) {
+                           int input) {
+                           //, int capacity) {
         this.address = address;
         this.start_time = start_time;
         this.category = category;
-        this.duration = duration;
-        this.capacity = capacity;
+        this.input = input;
+        //this.capacity = capacity;
     }
 
     public String getAddress() {
@@ -33,11 +34,9 @@ public class ProjectionClass {
         return category;
     }
 
-    public int getDuration() {
-        return duration;
+    public int getInput() {
+        return input;
     }
 
-    public int getCapacity() {
-        return capacity;
-    }
+    //public int getCapacity() { return capacity;}
 }

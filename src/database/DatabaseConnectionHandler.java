@@ -163,11 +163,11 @@ public class DatabaseConnectionHandler {
         return result.toArray(new ClassSession[result.size()]);
     }
 
-    public ProjectionClass[] projectAllClassSessions() {
+    public ProjectionClass[] projectAllClassSessions(String input) {
         ArrayList<ProjectionClass> result = new ArrayList<ProjectionClass>();
 
         try {
-            String query = "SELECT address, start_time, category, duration, capacity FROM CLASSSESSION";
+            String query = "SELECT address, start_time, category, " + input + " FROM CLASSSESSION";
             System.out.println("Executing query: " + query + "\n");
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(query);
@@ -177,8 +177,7 @@ public class DatabaseConnectionHandler {
                         rs.getString("address"),
                         rs.getTimestamp("start_time"),
                         rs.getString("category"),
-                        rs.getInt("duration"),
-                        rs.getInt("capacity")
+                        rs.getInt(input)
                 );
                 result.add(projectionClass);
             }

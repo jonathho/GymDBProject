@@ -134,14 +134,13 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
         System.out.println();
     }
 
-    public void printProjections() {
-        ProjectionClass[] ps = dbHandler.projectAllClassSessions();
+    public void printProjections(String input) {
+        ProjectionClass[] ps = dbHandler.projectAllClassSessions(input);
 
         System.out.printf("%-35.35s", "address");
         System.out.printf("%-25.25s", "start time");
         System.out.printf("%-15.15s", "category");
-        System.out.printf("%-15.15s", "duration");
-        System.out.printf("%-15.15s", "capacity");
+        System.out.printf("%-15.15s", input);
         System.out.println();
 
         for (int i = 0; i < ps.length; i++) {
@@ -160,8 +159,7 @@ public class Gym implements LoginWindowDelegate, TerminalTransactionsDelegate, U
                 System.out.printf("%-25.25s", cs.getStart_time().toString());
             }
             System.out.printf("%-15.15s", cs.getCategory());
-            System.out.printf("%-15.15s", cs.getDuration());
-            System.out.printf("%-15.15s", cs.getCapacity());
+            System.out.printf("%-15.15s", cs.getInput());
             System.out.println();
         }
         System.out.println();
